@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>お気に入りオート解析（最新アクセス順ランチャー）</title>
+  <style>
+    :root{
+      --bg:#0b1220; --card:#111827; --text:#e5e7eb; --muted:#9ca3af; --ring:#22d3ee; --good:#10b981; --warn:#f59e0b;
+    }
+    html,body{height:100%}
+    body{margin:0; font-family:system-ui, -apple-system, Segoe UI, Roboto, "Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic UI", sans-serif; background:radial-gradient(1200px 800px at 10% -10%, #0b1224, transparent), var(--bg); color:var(--text)}
+    header{max-width:1100px; margin:0 auto; padding:24px}
+    h1{margin:0 0 6px; font-size:clamp(22px,3.2vw,32px)}
+    .muted{color:var(--muted)}
+    main{max-width:1100px; margin:0 auto; padding:0 16px 48px}
+
+    .uploader{ border:1.5px dashed rgba(255,255,255,.18); background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015)); border-radius:16px; padding:16px; display:grid; gap:10px }
+    .uploader p{ margin:0 }
+    .uploader input[type=file]{ display:none }
+    .drop{ padding:18px; border-radius:12px; background:rgba(255,255,255,.04); text-align:center; }
+    .drop b{ color:#fff }
+    .btn{ display:inline-flex; align-items:center; gap:8px; border:1px solid rgba(255,255,255,.18); padding:10px 14px; border-radius:12px; cursor:pointer; background:linear-gradient(180deg, rgba(34,211,238,.18), rgba(34,211,238,.04)); color:#fff }
+    .btn:hover{ filter:brightness(1.08) }
+
+    .controls{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:14px }
+    .controls input[type="search"], .controls input[type="text"]{ padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.06); color:#fff; min-width:220px }
+    .controls select{ padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.06); color:#fff }
+
+    .summary{ margin-top:10px; color:var(--muted); font-size:13px }
+
+    .grid{ margin-top:16px; display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:12px }
+    .card{ background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015)); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:14px; display:grid; gap:8px }
+    .row{ display:flex; gap:10px; align-items:center }
+    .favicon{ width:18px; height:18px; border-radius:4px; background:#333; flex:0 0 auto }
+    .title{ font-weight:700; font-size:15px; line-height:1.3 }
+    .url{ font-size:12px; color:var(--muted); word-break:break-all }
+    .meta{ font-size:12px; color:var(--muted) }
+    .actions{ display:flex; gap:8px; flex-wrap:wrap }
+    .actions a{ text-decoration:none; color:#fff; font-weight:700; border:1px solid rgba(255,255,255,.15); padding:8px 10px; border-radius:10px; background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)) }
+    .tag{ font-size:11px; font-weight:700; padding:3px 8px; border-radius:999px; border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.06) }
+    .ok{ color:#002; background:linear-gradient(180deg, rgba(16,185,129,.85), rgba(16,185,129,.4)); border-color:rgba(16,185,129,.8)}
+    .warn{ color:#140900; background:linear-gradient(180deg, rgba(245,158,11,.9), rgba(245,158,11,.45)); border-color:rgba(245,158,11,.8)}
+
+    footer{max-width:1100px; margin:0 auto; padding:16px; border-top:1px dashed rgba(255,255,255,.08); color:var(--muted)}
+    code.k{ background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); padding:2px 6px; border-radius:6px }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>お気に入りオート解析（最新アクセス順ランチャー）</h1>
+    <p class="muted">ブラウザから <b>直接ブックマークを読むことはできない</b>ため、エクスポート済みの <b>bookmarks.html</b>（Netscape形式）または <b>ChromeのBookmarks JSON</b> を読み込みます。<br>検出できれば <b>最後に使った日時</b>（例: Chromeの <code class="k">date_last_used</code>、HTMLの <code class="k">LAST_VISIT</code> など）で並べ替え、無ければ追加日時などにフォールバックします。</p>
+
+    <div class="uploader" id="uploader">
+      <p><b>1)</b> ファイルをドラッグ＆ドロップするか、<label class="btn" for="file">ファイルを選択</label>してください。
+      <input type="file" id="file" accept=".html,.htm,.json,.txt" /></p>
+      <div class="drop" id="drop">ここに <b>bookmarks.html / Bookmarks JSON</b> をドロップ（複数可）</div>
+      <p><b>2)</b> またはテキストを直接貼り付け：</p>
+      <textarea id="paste" rows="6" placeholder="ここにHTMLまたはJSONを貼り付け" style="width:100%; padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.06); color:#fff"></textarea>
+      <div>
+        <button class="btn" id="btn-parse">貼り付け内容を解析</button>
+        <button class="btn" id="btn-clear">一覧をクリア</button>
+        <button class="btn" id="btn-export">結果をJSONで保存</button>
+      </div>
+    </div>
+
+    <div class="controls">
+      <input type="search" id="q" placeholder="タイトル/URLで検索" />
+      <select id="sort">
+        <option value="last">最後に使った日時（降順）</option>
+        <option value="added">追加日時（降順）</option>
+        <option value="alpha">名前（昇順）</option>
+      </select>
+      <label class="muted"><input type="checkbox" id="remember" checked /> クリックを“最後に使った日時”として記録（IndexedDB）</label>
+    </div>
+    <div class="summary" id="summary">0件</div>
+  </header>
+
+  <main>
+    <div class="grid" id="grid"></div>
+  </main>
+
+  <footer>
+    <p>ヒント：Chromeの <code class="k">Bookmarks</code>（JSON）には <code class="k">date_last_used</code> が含まれることがあります（単位：1601-01-01からのマイクロ秒）。HTML（Netscape形式）には <code class="k">ADD_DATE</code> / <code class="k">LAST_MODIFIED</code> / <code class="k">LAST_VISIT</code> が含まれる場合があります。無い場合はフォールバックで並べます。</p>
+  </footer>
+
+<script>
+// ====== モデル ======
+let ITEMS = []; // {title,url,lastUsed,added,source}
+const DB_NAME = 'bm-launcher-db';
+const STORE = 'items';
+let db = null;
+
+function openDB(){
+  return new Promise((resolve)=>{
+    try{
+      const req = indexedDB.open(DB_NAME, 1);
+      req.onupgradeneeded = (e)=>{
+        const idb = e.target.result;
+        if(!idb.objectStoreNames.contains(STORE)){
+          idb.createObjectStore(STORE, { keyPath:'url' });
+        }
+      };
+      req.onsuccess = ()=> resolve(req.result);
+      req.onerror   = ()=> resolve(null);
+    }catch(e){ resolve(null); }
+  });
+}
+
+async function getItem(url){
+  if(!db) return null;
+  return await new Promise((resolve)=>{
+    try{
+      const tx = db.transaction(STORE,'readonly');
+      const os = tx.objectStore(STORE);
+      const r = os.get(url);
+      r.onsuccess = ()=> resolve(r.result||null);
+      r.onerror = ()=> resolve(null);
+    }catch(e){ resolve(null); }
+  });
+}
+async function putItem(rec){
+  if(!db) return false;
+  return await new Promise((resolve)=>{
+    try{
+      const tx = db.transaction(STORE,'readwrite');
+      const os = tx.objectStore(STORE);
+      const r = os.put(rec);
+      r.onsuccess = ()=> resolve(true);
+      r.onerror = ()=> resolve(false);
+    }catch(e){ resolve(false); }
+  });
+}
+
+// ====== ユーティリティ ======
+function $(id){ return document.getElementById(id); }
+function fmt(ts){ if(!ts) return '—'; const d = new Date(ts); const p=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`; }
+function favicon(u){ try{ const o = new URL(u); return `https://www.google.com/s2/favicons?domain=${o.hostname}&sz=64`; }catch(e){ return ''; } }
+
+// Chromeのマイクロ秒(Win epoch 1601) → JS Date(ms, 1970)
+function chromeTimeToMs(v){
+  if(!v) return 0;
+  const s = typeof v === 'string' ? parseInt(v,10) : Number(v);
+  if(!Number.isFinite(s) || s<=0) return 0;
+  // 1601-01-01 からのµs → ms, 1970-01-01基準に合わせる
+  const EPOCH_DIFF_MS = Date.UTC(1970,0,1) - Date.UTC(1601,0,1); // 正の値
+  return Math.floor(s/1000) - EPOCH_DIFF_MS;
+}
+
+// ====== 解析：Chrome JSON ======
+function walkChrome(node, out){
+  if(!node) return;
+  if(Array.isArray(node)) return node.forEach(n=>walkChrome(n,out));
+  if(node.type === 'url' && node.url){
+    const added = chromeTimeToMs(node.date_added);
+    const last  = chromeTimeToMs(node.date_last_used || node.meta_info?.last_visited_desktop);
+    out.push({ title: node.name||node.url, url: node.url, added: added||0, lastUsed: last||0, source:'chrome-json' });
+  }
+  if(node.children){ node.children.forEach(n=>walkChrome(n,out)); }
+  if(node.roots){ for(const k of Object.keys(node.roots)) walkChrome(node.roots[k], out); }
+}
+
+// ====== 解析：Netscape HTML ======
+function parseHTMLBookmarks(text){
+  const doc = new DOMParser().parseFromString(text, 'text/html');
+  const links = [...doc.querySelectorAll('a[href]')];
+  const out = [];
+  for(const a of links){
+    const url = a.getAttribute('href');
+    if(!url) continue;
+    const title = (a.textContent||url).trim();
+    const add = a.getAttribute('add_date') || a.getAttribute('ADD_DATE');
+    const mod = a.getAttribute('last_modified') || a.getAttribute('LAST_MODIFIED');
+    const vis = a.getAttribute('last_visit') || a.getAttribute('LAST_VISIT');
+    const added = add ? Number(add)*1000 : 0; // 秒 → ms
+    const last = vis ? Number(vis)*1000 : (mod ? Number(mod)*1000 : added);
+    out.push({ title, url, added, lastUsed: last||0, source:'netscape-html' });
+  }
+  return out;
+}
+
+// ====== 解析：テキスト判別 ======
+function parseText(text){
+  text = text.trim();
+  if(!text) return [];
+  // JSON or HTML を判定
+  if(text.startsWith('{') || text.startsWith('[')){
+    try{
+      const obj = JSON.parse(text);
+      const out = [];
+      walkChrome(obj, out);
+      return out;
+    }catch(e){
+      console.error('JSON parse error', e);
+      return [];
+    }
+  }else{
+    return parseHTMLBookmarks(text);
+  }
+}
+
+// ====== レンダリング ======
+function render(){
+  const q = $('q').value.trim().toLowerCase();
+  const sort = $('sort').value;
+  let arr = ITEMS.slice();
+  if(q){ arr = arr.filter(x => (x.title||'').toLowerCase().includes(q) || (x.url||'').toLowerCase().includes(q)); }
+  // 重複URLは最新を優先
+  const map = new Map();
+  for(const it of arr){
+    const old = map.get(it.url);
+    if(!old || (it.lastUsed||0) > (old.lastUsed||0) || (it.added||0) > (old.added||0)) map.set(it.url, it);
+  }
+  arr = [...map.values()];
+
+  if(sort==='last') arr.sort((a,b)=>(b.lastUsed||0)-(a.lastUsed||0));
+  else if(sort==='added') arr.sort((a,b)=>(b.added||0)-(a.added||0));
+  else if(sort==='alpha') arr.sort((a,b)=> (a.title||'').localeCompare(b.title||''));
+
+  $('summary').textContent = `${arr.length}件 / 取り込み合計 ${ITEMS.length}件`;
+
+  const grid = $('grid');
+  grid.innerHTML = '';
+  for(const it of arr){
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.innerHTML = `
+      <div class="row">
+        <img class="favicon" src="${favicon(it.url)}" alt="" />
+        <div class="title">${escapeHtml(it.title||'(無題)')}</div>
+      </div>
+      <div class="url">${escapeHtml(it.url)}</div>
+      <div class="meta">最後に使った: <b>${fmt(it.lastUsed)}</b>　/　追加: ${fmt(it.added)}　<span class="tag">${it.source}</span></div>
+      <div class="actions">
+        <a href="${it.url}" target="_blank" rel="noopener" data-url>アクセス</a>
+      </div>
+    `;
+    const a = div.querySelector('[data-url]');
+    a.addEventListener('click', async ()=>{
+      if(!$('remember').checked) return;
+      // クリックを lastUsed として保存（ローカル追跡）
+      const now = Date.now();
+      it.lastUsed = now;
+      render();
+      // IndexedDBにも記録
+      const prev = await getItem(it.url) || { url: it.url };
+      await putItem({ ...prev, url: it.url, lastUsed: now, title: it.title });
+    });
+    grid.appendChild(div);
+  }
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, (c)=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;' }[c]));
+}
+
+// ====== 取り込み ======
+async function ingestFiles(fileList){
+  const texts = await Promise.all([...fileList].map(f=>f.text()));
+  for(const t of texts){ ITEMS.push(...parseText(t)); }
+  render();
+}
+
+// ====== 初期化 ======
+(async function init(){
+  db = await openDB();
+
+  // UI events
+  $('file').addEventListener('change', (e)=>{ if(e.target.files?.length) ingestFiles(e.target.files); e.target.value=''; });
+  $('drop').addEventListener('dragover', e=>{ e.preventDefault(); e.dataTransfer.dropEffect='copy'; });
+  $('drop').addEventListener('drop', e=>{ e.preventDefault(); if(e.dataTransfer.files?.length) ingestFiles(e.dataTransfer.files); });
+  $('btn-parse').addEventListener('click', ()=>{ ITEMS.push(...parseText($('paste').value)); render(); });
+  $('btn-clear').addEventListener('click', ()=>{ ITEMS = []; render(); });
+  $('btn-export').addEventListener('click', ()=>{
+    const blob = new Blob([JSON.stringify(ITEMS, null, 2)], {type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'parsed-bookmarks.json';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+  $('q').addEventListener('input', render);
+  $('sort').addEventListener('change', render);
+  $('remember').addEventListener('change', ()=>{});
+})();
+</script>
+</body>
+</html>
