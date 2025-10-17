@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>有名飲食チェーンのリンク集（更新マーク付き）</title>
+  <title>有名飲食チェーンのリンク集</title>
   <style>
     :root {
       --bg:#0f172a;            /* slate-900 */
@@ -21,9 +21,7 @@
       background: radial-gradient(1200px 800px at 10% -10%, #0b1224, transparent), var(--bg);
       color:var(--text);
     }
-    header{
-      padding:24px; max-width:1100px; margin:0 auto;
-    }
+    header{ padding:24px; max-width:1200px; margin:0 auto; }
     h1{font-size: clamp(22px, 3vw, 32px); margin:0 0 6px}
     .desc{color:var(--muted); line-height:1.7}
     .toolbar{display:flex; gap:12px; flex-wrap:wrap; margin-top:12px}
@@ -32,51 +30,59 @@
       box-shadow: 0 6px 24px rgba(34,211,238,.08) inset, 0 4px 18px rgba(0,0,0,.35);
     }
     button:hover{filter:brightness(1.08)}
-    main{max-width:1100px; margin:0 auto; padding:8px 16px 48px}
+    main{max-width:1200px; margin:0 auto; padding:8px 16px 48px}
 
     .grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:14px; }
     .card{ background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)); border:1px solid rgba(255,255,255,.06);
-      padding:16px; border-radius:16px; position:relative; min-height:104px; }
+      padding:16px; border-radius:16px; position:relative; min-height:116px; }
     .title{ font-weight:700; font-size:18px; margin-bottom:6px }
     .url{ font-size:12px; color:var(--muted); word-break: break-all }
     .meta{ font-size:12px; color:var(--muted); margin-top:10px; display:flex; gap:10px; flex-wrap:wrap }
     .badges{ position:absolute; right:10px; top:10px; display:flex; gap:6px; }
-    .badge{
-      font-size:11px; font-weight:700; padding:4px 8px; border-radius:999px; border:1px solid rgba(255,255,255,.15);
-      background:rgba(255,255,255,.06);
-    }
+    .badge{ font-size:11px; font-weight:700; padding:4px 8px; border-radius:999px; border:1px solid rgba(255,255,255,.15); background:rgba(255,255,255,.06); }
     .b-new{ color:#002; background: linear-gradient(180deg, rgba(34,211,238,.8), rgba(34,211,238,.35)); border-color: rgba(34,211,238,.7) }
     .b-upd{ color:#140900; background: linear-gradient(180deg, rgba(245,158,11,.9), rgba(245,158,11,.45)); border-color: rgba(245,158,11,.8) }
     .b-ok{  color:#00140b; background: linear-gradient(180deg, rgba(16,185,129,.8), rgba(16,185,129,.4)); border-color: rgba(16,185,129,.8) }
     .b-unk{ color:#160000; background: linear-gradient(180deg, rgba(239,68,68,.85), rgba(239,68,68,.45)); border-color: rgba(239,68,68,.8) }
+    .b-weak{ color:#001016; background: linear-gradient(180deg, rgba(59,130,246,.85), rgba(59,130,246,.45)); border-color: rgba(59,130,246,.8) }
 
-    .actions{ margin-top:12px; display:flex; gap:8px; }
-    .actions a{
+    .actions{ margin-top:12px; display:flex; gap:8px; flex-wrap:wrap }
+    .actions a, .actions button{
       display:inline-flex; align-items:center; gap:8px; text-decoration:none; color:var(--text); font-weight:700;
-      border:1px solid rgba(255,255,255,.12); padding:8px 10px; border-radius:10px;
-      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.12); padding:8px 10px; border-radius:10px; background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02)); cursor:pointer
     }
-    .actions a:hover{ filter:brightness(1.08) }
+    .actions a:hover, .actions button:hover{ filter:brightness(1.08) }
     .note{ font-size:12px; color:var(--muted); margin-top:8px }
     .small{ font-size:11px; color:var(--muted) }
 
-    footer{ max-width:1100px; margin:0 auto; padding:16px 24px; border-top:1px dashed rgba(255,255,255,.08); color:var(--muted) }
+    .settings{ margin-top:16px; display:grid; gap:10px; grid-template-columns: minmax(240px,1fr) 1fr; align-items:center; }
+    .settings input[type="text"], .settings input[type="number"]{ width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.15); background:rgba(255,255,255,.06); color:var(--text) }
+    .settings label{ font-size:13px; color:var(--muted) }
+    .settings .row{ display:contents }
+
+    footer{ max-width:1200px; margin:0 auto; padding:16px 24px; border-top:1px dashed rgba(255,255,255,.08); color:var(--muted) }
     code.k{ background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); padding:2px 6px; border-radius:6px }
   </style>
 </head>
 <body>
   <header>
-    <h1>有名飲食チェーンのリンク集（更新マーク自動判定）</h1>
+    <h1>有名飲食チェーンのリンク集</h1>
     <p class="desc">
-      各サイトの <b>最終アクセス日時</b> を <b>IndexedDB</b> に保存します。<br>
-      さらに、CORS対応サイトでは <b>ETag / Last-Modified</b> を取得し、<b>前回訪問以降に内容が更新された</b>可能性が高い場合は <span class="badge b-upd">更新あり</span> を表示します。<br>
-      CORS非対応などで確認できない場合は <span class="badge b-unk">確認不可</span> を表示します。
+      それぞれのサイトについて <b>最終アクセス日時</b> だけを <b>IndexedDB</b> に保存します。更新チェック（ETag/Last-Modified/RSS等）は<strong>行いません</strong>。
     </p>
+
     <div class="toolbar">
-      <button id="btn-recheck">すべて再チェック</button>
       <button id="btn-reset">記録を全て削除</button>
+      <span id="diag" class="note" style="margin-left:8px">モード: 最終アクセスのみ（更新チェック無効）</span>
     </div>
-    <p class="note">※ ブラウザの制約上、外部サイトの更新検知は <span class="small">CORS でヘッダが取得できた場合のみ</span> 正確に行えます。取得できない場合は「未訪問」判定のみとなります。</p>
+
+    
+      <div class="row"><label><input type="checkbox" id="useRss" checked /> RSS/サイトマップも試す</label><span></span></div>
+      <div class="row"><label><input type="checkbox" id="useRange" checked /> HTMLの先頭 <input id="rangeKB" type="number" value="16" min="4" max="256" style="width:64px"> KB だけ取得して指紋ハッシュ</label><span></span></div>
+      <div class="row"><label><input type="checkbox" id="useFavicon" checked /> favicon（/favicon.ico）の Last-Modified を使用（弱い指標）</label><span></span></div>
+    </div>
+
+    <p class="note">※ ブラウザの制約上、外部サイトの詳細取得には CORS が必要です。<br>※ プロキシを使う場合は、対象サイトの利用規約に従い、許容された方法でご利用ください。</p>
   </header>
 
   <main>
@@ -84,118 +90,301 @@
   </main>
 
   <footer>
-    <p>ヒント：リンクをクリックすると、そのサイトの <code class="k">最終アクセス日時</code> と、当時の <code class="k">ETag/Last-Modified</code> を保存します。次回チェック時に差分があれば <span class="badge b-upd">更新あり</span> が点灯します。</p>
+    <p>ヒント：リンクをクリックすると、その時点の <code class="k">最終アクセス</code>と、<code class="k">ETag/Last-Modified/指紋</code> を保存します。次回チェック時に差分があれば <span class="badge b-upd">更新あり</span> が点灯します。<br>
+    <span class="small">※ 指紋（fingerprint）は Range で取得した一部HTMLの SHA-256 です。ヘッダが無い場合の代替指標として使います。</span></p>
   </footer>
 
 <script>
-// === 設定：チェーン一覧（必要に応じて追加/編集してください） ==========================
+// === 設定：チェーン一覧（追加/編集してください） ================================
 const CHAINS = [
+  // ハンバーガー
   { name: 'マクドナルド', url: 'https://www.mcdonalds.co.jp/' },
   { name: 'モスバーガー', url: 'https://www.mos.jp/' },
-  { name: 'ケンタッキーフライドチキン', url: 'https://www.kfc.co.jp/' },
+  { name: 'ロッテリア', url: 'https://www.lotteria.jp/' },
+  { name: 'フレッシュネスバーガー', url: 'https://www.freshnessburger.co.jp/' },
+  { name: 'バーガーキング', url: 'https://www.burgerking.co.jp/' },
+  { name: 'ファーストキッチン', url: 'https://www.first-kitchen.co.jp/' },
+  { name: 'ドムドムハンバーガー', url: 'https://www.domdomhamburger.com/' },
+
+  // 牛丼・丼
   { name: '吉野家', url: 'https://www.yoshinoya.com/' },
   { name: 'すき家', url: 'https://www.sukiya.jp/' },
   { name: '松屋', url: 'https://www.matsuyafoods.co.jp/' },
-  { name: 'はなまるうどん', url: 'https://www.hanamaruudon.com/' },
-  { name: 'くら寿司', url: 'https://www.kurasushi.co.jp/' },
-  { name: 'スシロー', url: 'https://www.akindo-sushiro.co.jp/' },
+  { name: 'なか卯', url: 'https://www.nakau.co.jp/' },
+
+  // カレー
   { name: 'ココイチ（CoCo壱番屋）', url: 'https://www.ichibanya.co.jp/' },
+  { name: 'ゴーゴーカレー', url: 'https://gogocurry.com/' },
+
+  // うどん・そば
+  { name: 'はなまるうどん', url: 'https://www.hanamaruudon.com/' },
+  { name: '丸亀製麺', url: 'https://www.marugame-seimen.com/' },
+  { name: '名代 富士そば', url: 'https://fujisoba.co.jp/' },
+  { name: 'ゆで太郎', url: 'http://www.yudetaro.jp/' },
+
+  // ラーメン
+  { name: '一風堂', url: 'https://www.ippudo.com/' },
+  { name: '天下一品', url: 'https://www.tenkaippin.co.jp/' },
+  { name: '幸楽苑', url: 'https://www.kourakuen.co.jp/' },
+  { name: 'スガキヤ', url: 'https://www.sugakico.co.jp/' },
+  { name: '山岡家', url: 'https://www.yamaokaya.com/' },
+  { name: '日高屋', url: 'https://hidakaya.hiday.co.jp/' },
+
+  // 寿司
+  { name: 'スシロー', url: 'https://www.akindo-sushiro.co.jp/' },
+  { name: 'くら寿司', url: 'https://www.kurasushi.co.jp/' },
+  { name: 'はま寿司', url: 'https://www.hama-sushi.co.jp/' },
+  { name: 'かっぱ寿司', url: 'https://www.kappasushi.jp/' },
+  { name: '元気寿司', url: 'https://www.genkisushi.co.jp/' },
+
+  // ファミレス
   { name: 'ガスト', url: 'https://www.skylark.co.jp/gusto/' },
+  { name: 'バーミヤン', url: 'https://www.skylark.co.jp/bamiyan/' },
+  { name: 'ジョナサン', url: 'https://www.skylark.co.jp/jonathan/' },
   { name: 'サイゼリヤ', url: 'https://www.saizeriya.co.jp/' },
+  { name: 'ロイヤルホスト', url: 'https://www.royalhost.jp/' },
+  { name: 'デニーズ', url: 'https://www.dennys.jp/' },
+  { name: 'ココス', url: 'https://www.cocos-jpn.co.jp/' },
+  { name: 'ジョイフル', url: 'https://www.joyfull.co.jp/' },
+  { name: 'ビッグボーイ', url: 'https://www.bigboyjapan.co.jp/' },
   { name: 'びっくりドンキー', url: 'https://www.bikkuri-donkey.com/' },
-  { name: 'リンガーハット', url: 'https://www.ringerhut.jp/' },
+  { name: '大戸屋', url: 'https://www.ootoya.com/' },
+
+  // カフェ・喫茶
+  { name: 'スターバックス', url: 'https://www.starbucks.co.jp/' },
+  { name: 'タリーズコーヒー', url: 'https://www.tullys.co.jp/' },
   { name: 'ドトールコーヒー', url: 'https://www.doutor.co.jp/' },
   { name: 'コメダ珈琲店', url: 'https://www.komeda.co.jp/' },
+  { name: 'プロント', url: 'https://www.pronto.co.jp/' },
+  { name: 'カフェ・ベローチェ', url: 'https://www.cafe-veloce.com/' },
+  { name: 'サンマルクカフェ', url: 'https://www.saint-marc-hd.com/saintmarccafe/' },
+  { name: 'ブルーボトルコーヒー', url: 'https://bluebottlecoffee.jp/' },
+
+  // ピザ
+  { name: 'ドミノ・ピザ', url: 'https://www.dominos.jp/' },
+  { name: 'ピザーラ', url: 'https://www.pizza-la.co.jp/' },
+  { name: 'ピザハット', url: 'https://www.pizzahut.jp/' },
+
+  // 焼肉・肉料理
+  { name: '牛角', url: 'https://www.gyukaku.ne.jp/' },
+  { name: '安楽亭', url: 'https://www.anrakutei.co.jp/' },
+  { name: '焼肉きんぐ', url: 'https://www.yakiniku-king.jp/' },
+  { name: 'いきなり！ステーキ', url: 'https://ikinaristeak.com/' },
+  { name: 'ペッパーランチ', url: 'https://www.pepperlunch.com/ja-jp/' },
+
+  // 天ぷら・とんかつ・和食
+  { name: '天丼てんや', url: 'https://www.tenya.co.jp/' },
+  { name: 'かつや', url: 'https://www.arclandservice.co.jp/katsuya/' },
+  { name: 'とんかつ和幸', url: 'https://www.wako-group.co.jp/' },
+  { name: 'まい泉', url: 'https://mai-sen.com/' },
+
+  // 弁当・持ち帰り
+  { name: 'ほっともっと', url: 'https://www.hottomotto.com/' },
+  { name: 'オリジン弁当', url: 'https://www.toshu.co.jp/origin/' },
 ];
 
 // === IndexedDB ヘルパー =====================================================
 const DB_NAME = 'chain-links-db';
 const STORE = 'links';
 let db;
+const DISABLE_UPDATE_CHECK = true; // 更新チェックを省略（最終アクセスのみ）
+let FALLBACK = null; // localStorage ベースのフォールバック
 
 function openDB(){
-  return new Promise((resolve, reject)=>{
-    const req = indexedDB.open(DB_NAME, 1);
-    req.onupgradeneeded = (e)=>{
-      const db = e.target.result;
-      if(!db.objectStoreNames.contains(STORE)){
-        const os = db.createObjectStore(STORE, { keyPath: 'url' });
-        os.createIndex('lastVisited', 'lastVisited');
-      }
-    };
-    req.onsuccess = ()=> resolve(req.result);
-    req.onerror = ()=> reject(req.error);
+  return new Promise((resolve)=>{
+    try{
+      const req = indexedDB.open(DB_NAME, 2);
+      req.onupgradeneeded = (e)=>{
+        const idb = e.target.result;
+        if(!idb.objectStoreNames.contains(STORE)){
+          const os = idb.createObjectStore(STORE, { keyPath: 'url' });
+          os.createIndex('lastVisited', 'lastVisited');
+        }
+      };
+      req.onsuccess = ()=> resolve(req.result);
+      req.onerror   = ()=> resolve(null); // 失敗時は null を返す
+    }catch(err){
+      resolve(null);
+    }
   });
 }
 
+
 async function getRecord(url){
-  const tx = db.transaction(STORE, 'readonly');
-  const os = tx.objectStore(STORE);
-  return await new Promise((resolve, reject)=>{
-    const r = os.get(url);
-    r.onsuccess = ()=> resolve(r.result || null);
-    r.onerror   = ()=> reject(r.error);
-  });
+  if(db){
+    try{
+      const tx = db.transaction(STORE, 'readonly');
+      const os = tx.objectStore(STORE);
+      return await new Promise((resolve, reject)=>{
+        const r = os.get(url);
+        r.onsuccess = ()=> resolve(r.result || null);
+        r.onerror   = ()=> reject(r.error);
+      });
+    }catch(e){/* fallthrough */}
+  }
+  // フォールバック（localStorage）
+  if(FALLBACK==null){
+    try{ FALLBACK = JSON.parse(localStorage.getItem('chain-links-fallback')||'{}'); }catch(_){ FALLBACK = {}; }
+  }
+  return FALLBACK[url] || null;
 }
 
 async function putRecord(rec){
-  const tx = db.transaction(STORE, 'readwrite');
-  const os = tx.objectStore(STORE);
-  return await new Promise((resolve, reject)=>{
-    const r = os.put(rec);
-    r.onsuccess = ()=> resolve(true);
-    r.onerror   = ()=> reject(r.error);
-  });
+  if(db){
+    try{
+      const tx = db.transaction(STORE, 'readwrite');
+      const os = tx.objectStore(STORE);
+      return await new Promise((resolve, reject)=>{
+        const r = os.put(rec);
+        r.onsuccess = ()=> resolve(true);
+        r.onerror   = ()=> reject(r.error);
+      });
+    }catch(e){/* fallthrough */}
+  }
+  // フォールバック
+  if(FALLBACK==null){
+    try{ FALLBACK = JSON.parse(localStorage.getItem('chain-links-fallback')||'{}'); }catch(_){ FALLBACK = {}; }
+  }
+  FALLBACK[rec.url] = rec;
+  try{ localStorage.setItem('chain-links-fallback', JSON.stringify(FALLBACK)); }catch(_){ /* quota? ignore */ }
+  return true;
 }
 
 async function clearAll(){
-  const tx = db.transaction(STORE, 'readwrite');
-  const os = tx.objectStore(STORE);
-  return await new Promise((resolve, reject)=>{
-    const r = os.clear();
-    r.onsuccess = ()=> resolve(true);
-    r.onerror   = ()=> reject(r.error);
-  });
+  if(db){
+    try{
+      const tx = db.transaction(STORE, 'readwrite');
+      const os = tx.objectStore(STORE);
+      await new Promise((resolve, reject)=>{
+        const r = os.clear();
+        r.onsuccess = ()=> resolve(true);
+        r.onerror   = ()=> reject(r.error);
+      });
+    }catch(e){/* ignore */}
+  }
+  FALLBACK = {};
+  try{ localStorage.removeItem('chain-links-fallback'); }catch(_){ }
+  return true;
 }
 
-// === 更新チェック（ETag / Last-Modified をHEAD/GETで取得） ====================
-async function fetchTags(url){
-  // 1) HEADでCORS許可されていれば最短
-  try{
-    const res = await fetch(url, { method:'HEAD', mode:'cors', cache:'no-store' });
-    const etag = res.headers.get('ETag') || res.headers.get('etag');
-    const lastMod = res.headers.get('Last-Modified') || res.headers.get('last-modified');
-    if(etag || lastMod){
-      return { etag, lastMod, ok:true, via:'HEAD' };
-    }
-  }catch(e){ /* noop */ }
-
-  // 2) 一部サイトはGETでのみヘッダ露出（負荷軽減のため body は読まない）
-  try{
-    const res = await fetch(url, { method:'GET', mode:'cors', cache:'no-store' });
-    const etag = res.headers.get('ETag') || res.headers.get('etag');
-    const lastMod = res.headers.get('Last-Modified') || res.headers.get('last-modified');
-    if(etag || lastMod){
-      return { etag, lastMod, ok:true, via:'GET' };
-    }
-  }catch(e){ /* noop */ }
-
-  // 3) CORS非対応など
-  return { ok:false };
-}
-
+// === ユーティリティ ==========================================================
 function formatDT(ts){
   if(!ts) return '—';
   const d = new Date(ts);
   const p = (n)=> String(n).padStart(2,'0');
   return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
 }
-
-function badge(text, cls){
-  const s = document.createElement('span');
-  s.className = `badge ${cls}`; s.textContent = text; return s;
+function badge(text, cls){ const s = document.createElement('span'); s.className = `badge ${cls}`; s.textContent = text; return s; }
+async function sha256Hex(str){
+  const enc = new TextEncoder().encode(str);
+  const buf = await crypto.subtle.digest('SHA-256', enc);
+  return [...new Uint8Array(buf)].map(x=>x.toString(16).padStart(2,'0')).join('');
 }
 
+// === 更新信号の取得（多段フェイルオーバー） ================================
+async function fetchVia(target, init){
+  const proxy = document.getElementById('proxy').value.trim();
+  if(proxy){
+    const u = proxy.includes('?') ? `${proxy}&url=${encodeURIComponent(target)}` : `${proxy}?url=${encodeURIComponent(target)}`;
+    return fetch(u, init);
+  }
+  return fetch(target, init);
+}
+
+async function tryHeadOrGet(url){
+  // 1) HEAD
+  try{
+    const res = await fetchVia(url, { method:'HEAD', mode:'cors', cache:'no-store' });
+    if(res.ok){
+      const etag = res.headers.get('ETag') || res.headers.get('etag');
+      const lastMod = res.headers.get('Last-Modified') || res.headers.get('last-modified');
+      return { ok:true, etag, lastMod, via:'HEAD', endpoint:url };
+    }
+  }catch(e){}
+  // 2) GET（本文は読まない）
+  try{
+    const res = await fetchVia(url, { method:'GET', mode:'cors', cache:'no-store' });
+    const etag = res.headers.get('ETag') || res.headers.get('etag');
+    const lastMod = res.headers.get('Last-Modified') || res.headers.get('last-modified');
+    if(etag || lastMod){ return { ok:true, etag, lastMod, via:'GET', endpoint:url }; }
+    // CORS許可があるなら部分取得して指紋
+    if(res.ok && (document.getElementById('useRange').checked)){
+      const kb = Math.max(4, Math.min(256, Number(document.getElementById('rangeKB').value||16)));
+      try{
+        const part = await fetchVia(url, { method:'GET', mode:'cors', cache:'no-store', headers:{ 'Range': `bytes=0-${kb*1024-1}` }});
+        if(part.ok){
+          const text = await part.text();
+          const fingerprint = await sha256Hex(text);
+          return { ok:true, fingerprint, via:`RANGE(${kb}KB)`, endpoint:url };
+        }
+      }catch(e){}
+    }
+  }catch(e){}
+  return { ok:false };
+}
+
+async function tryFavicon(url){
+  if(!document.getElementById('useFavicon').checked) return { ok:false };
+  try{
+    const u = new URL(url);
+    const fav = `${u.origin}/favicon.ico`;
+    const res = await fetchVia(fav, { method:'HEAD', mode:'cors', cache:'no-store' });
+    if(res.ok){
+      const lastMod = res.headers.get('Last-Modified') || res.headers.get('last-modified');
+      if(lastMod){ return { ok:true, lastMod, via:'FAVICON', endpoint:fav, weak:true }; }
+    }
+  }catch(e){}
+  return { ok:false };
+}
+
+const RSS_CANDIDATES = [
+  'feed', 'rss', 'rss.xml', 'atom.xml', 'index.xml', 'news/rss', 'sitemap.xml'
+];
+async function tryRssOrSitemap(url){
+  if(!document.getElementById('useRss').checked) return { ok:false };
+  try{
+    const u = new URL(url);
+    for(const p of RSS_CANDIDATES){
+      const rss = `${u.origin}/${p}`;
+      try{
+        const r1 = await fetchVia(rss, { method:'HEAD', mode:'cors', cache:'no-store' });
+        if(r1.ok){
+          const etag = r1.headers.get('ETag') || r1.headers.get('etag');
+          const lastMod = r1.headers.get('Last-Modified') || r1.headers.get('last-modified');
+          if(etag || lastMod) return { ok:true, etag, lastMod, via:'RSSHEAD', endpoint:rss };
+        }
+      }catch(e){}
+      try{
+        const r2 = await fetchVia(rss, { method:'GET', mode:'cors', cache:'no-store' });
+        if(r2.ok){
+          const etag = r2.headers.get('ETag') || r2.headers.get('etag');
+          const lastMod = r2.headers.get('Last-Modified') || r2.headers.get('last-modified');
+          if(etag || lastMod) return { ok:true, etag, lastMod, via:'RSSGET', endpoint:rss };
+          // GETできたら中身を軽くハッシュ
+          const text = await r2.text();
+          const fingerprint = await sha256Hex(text.slice(0, 64*1024)); // 64KBまで
+          return { ok:true, fingerprint, via:'RSSHASH', endpoint:rss };
+        }
+      }catch(e){}
+    }
+  }catch(e){}
+  return { ok:false };
+}
+
+async function fetchUpdateSignal(url){
+  // メインURL
+  let r = await tryHeadOrGet(url);
+  if(r.ok) return r;
+  // RSS/サイトマップ
+  r = await tryRssOrSitemap(url);
+  if(r.ok) return r;
+  // favicon
+  r = await tryFavicon(url);
+  if(r.ok) return r;
+  return { ok:false };
+}
+
+// === UI生成 ================================================================
 function cardTemplate(c){
   const div = document.createElement('div');
   div.className = 'card';
@@ -205,85 +394,32 @@ function cardTemplate(c){
     <div class="url">${c.url}</div>
     <div class="actions">
       <a href="${c.url}" target="_blank" rel="noopener" data-open>サイトを開く</a>
-      <a href="#" data-check>更新チェック</a>
+      <button data-debug>詳細</button>
     </div>
     <div class="meta">
       <div>最終アクセス: <span data-lastVisited>—</span></div>
+    </div>
       <div>最終チェック: <span data-lastChecked>—</span></div>
       <div class="small">ETag: <span data-etag>—</span></div>
       <div class="small">Last-Modified: <span data-lastmod>—</span></div>
+      <div class="small">指紋: <span data-fp>—</span></div>
+      <div class="small">ソース: <span data-source>—</span></div>
     </div>
   `;
   return div;
 }
 
-function setBadges(el, { isNew, isUpdated, isUnknown }){
+function setBadges(el, { isNew }){
   const box = el.querySelector('[data-badges]');
   box.innerHTML = '';
   if(isNew) box.appendChild(badge('未訪問', 'b-new'));
-  if(isUpdated) box.appendChild(badge('更新あり', 'b-upd'));
-  if(isUnknown) box.appendChild(badge('確認不可', 'b-unk'));
-  if(!isNew && !isUpdated && !isUnknown) box.appendChild(badge('変更なし', 'b-ok'));
+  if(!isNew) box.appendChild(badge('訪問済み', 'b-ok'));
 }
 
-function computeFlags(rec){
-  const isNew = !rec?.lastVisited;
-  let isUpdated = false;
-  let isUnknown = false;
-
-  if(!isNew){
-    // 訪問済みの場合にのみ更新可否を判定
-    if(rec && (rec.etag || rec.lastMod)){
-      // 最新タグと、最後に訪問した時点のタグを比較
-      if(rec.lastVisitedTag){
-        if(rec.etag && rec.lastVisitedTag.etag && rec.etag !== rec.lastVisitedTag.etag){ isUpdated = true; }
-        else if(rec.lastMod && rec.lastVisitedTag.lastMod && rec.lastMod !== rec.lastVisitedTag.lastMod){ isUpdated = true; }
-      }
-    }else{
-      // タグが取得できない場合
-      isUnknown = true;
-    }
-  }
-
-  return { isNew, isUpdated, isUnknown };
-}
-
-async function render(){
-  const grid = document.getElementById('linkGrid');
-  grid.innerHTML = '';
-
-  for(const c of CHAINS){
-    const card = cardTemplate(c);
-    grid.appendChild(card);
-
-    const rec = await getRecord(c.url);
-    updateCardUI(card, rec);
-
-    // 開く
-    card.querySelector('[data-open]').addEventListener('click', async ()=>{
-      // 開く瞬間に lastVisited を更新（背景でタグも保存）
-      const prev = await getRecord(c.url) || { url:c.url };
-      const tag = await fetchTags(c.url);
-      const now = Date.now();
-      const merged = {
-        ...prev,
-        url: c.url,
-        lastVisited: now,
-        lastChecked: tag.ok ? now : (prev?.lastChecked || now),
-        etag: tag.ok ? (tag.etag || prev?.etag || null) : (prev?.etag || null),
-        lastMod: tag.ok ? (tag.lastMod || prev?.lastMod || null) : (prev?.lastMod || null),
-        lastVisitedTag: tag.ok ? { etag: tag.etag || null, lastMod: tag.lastMod || null } : (prev?.lastVisitedTag || null),
-      };
-      await putRecord(merged);
-      updateCardUI(card, merged);
-    });
-
-    // 再チェック
-    card.querySelector('[data-check]').addEventListener('click', async (e)=>{
-      e.preventDefault();
-      await checkOne(c.url, card);
-    });
-  }
+function computeFlags(rec) {
+  // 最終アクセスのみのモード用：未訪問かどうかだけ判定
+  const isNew = !rec || !rec.lastVisited;
+  return { isNew };
 }
 
 function updateCardUI(card, rec){
@@ -291,45 +427,109 @@ function updateCardUI(card, rec){
   card.querySelector('[data-lastChecked]').textContent = formatDT(rec?.lastChecked);
   card.querySelector('[data-etag]').textContent = rec?.etag || '—';
   card.querySelector('[data-lastmod]').textContent = rec?.lastMod || '—';
+  card.querySelector('[data-fp]').textContent = rec?.fingerprint ? rec.fingerprint.slice(0,12)+'…' : '—';
+  card.querySelector('[data-source]').textContent = rec?.source || '—';
   const flags = computeFlags(rec);
   setBadges(card, flags);
 }
 
 async function checkOne(url, card){
-  const prev = await getRecord(url) || { url };
-  const tag = await fetchTags(url);
-  const now = Date.now();
-  const merged = {
-    ...prev,
-    url,
-    lastChecked: now,
-    etag: tag.ok ? (tag.etag || null) : (prev.etag || null),
-    lastMod: tag.ok ? (tag.lastMod || null) : (prev.lastMod || null),
-  };
-  await putRecord(merged);
-  updateCardUI(card, merged);
+  // 更新チェックは無効化しているので何もしません（互換のために残置）
+  const rec = await getRecord(url);
+  updateCardUI(card, rec);
+}
+
+async function render(){
+  const grid = document.getElementById('linkGrid');
+  grid.innerHTML = '';
+
+  for (const c of CHAINS){
+    const card = cardTemplate(c);
+    grid.appendChild(card);
+
+    const rec = await getRecord(c.url);
+    updateCardUI(card, rec);
+
+    // 開く（最終アクセスのみ記録）
+    {
+      const el = card.querySelector('[data-open]');
+      if (el) el.addEventListener('click', async ()=>{
+        const prev = await getRecord(c.url) || { url: c.url };
+        const now = Date.now();
+        const merged = { ...prev, url: c.url, lastVisited: now };
+        await putRecord(merged);
+        updateCardUI(card, merged);
+      });
+    }
+
+    // （更新チェックは無効化）存在しても何もしない
+    {
+      const el = card.querySelector('[data-check]');
+      if (el) el.addEventListener('click', async (e)=>{
+        e.preventDefault();
+        await checkOne(c.url, card);
+      });
+    }
+
+    // 詳細
+    {
+      const el = card.querySelector('[data-debug]');
+      if (el) el.addEventListener('click', async ()=>{
+        const r = await getRecord(c.url);
+        alert(JSON.stringify(r, null, 2));
+      });
+    }
+
+    // ソース表示（手動確認用）
+    {
+      const el = card.querySelector('[data-viewsrc]');
+      if (el) el.addEventListener('click', ()=>{
+        try { window.open('view-source:' + c.url, '_blank'); }
+        catch(e){ alert('view-source: はブラウザによってはブロックされます。Chrome/Edgeでお試しください。'); }
+      });
+    }
+  }
 }
 
 async function recheckAll(){
+  // 更新チェックを廃止したため実質 no-op（互換のために残置）
   const cards = [...document.querySelectorAll('.card')];
-  await Promise.all(cards.map(async (card)=>{
-    const url = card.querySelector('.url').textContent.trim();
+  for (const card of cards){
+    const url = card.querySelector('.url')?.textContent?.trim();
+    if (!url) continue;
     await checkOne(url, card);
-  }));
+  }
 }
 
 // === 初期化 ================================================================
 (async function init(){
-  db = await openDB();
-  await render();
+  try{
+    db = await openDB();
+    const diag = document.getElementById('diag');
+    if(diag){ diag.textContent = db ? '保存方式: IndexedDB' : '保存方式: localStorage（フォールバック）'; }
+    await render();
+  }catch(e){
+    // 最低限でもカードは描画する
+    const diag = document.getElementById('diag');
+    if(diag){ diag.textContent = '保存方式: localStorage（フォールバック）'; }
+    db = null;
+    await render();
+  }
 
-  document.getElementById('btn-recheck').addEventListener('click', recheckAll);
-  document.getElementById('btn-reset').addEventListener('click', async ()=>{
-    if(confirm('IndexedDBに保存した記録を全て削除します。よろしいですか？')){
-      await clearAll();
-      await render();
-    }
-  });
+  // btn-recheck はモードにより存在しないことがあるため防御的に
+  {
+    const btnRe = document.getElementById('btn-recheck');
+    if (btnRe) btnRe.addEventListener('click', recheckAll);
+  }
+  {
+    const btnReset = document.getElementById('btn-reset');
+    if (btnReset) btnReset.addEventListener('click', async ()=>{
+      if(confirm('保存した記録を全て削除します。よろしいですか？')){
+        await clearAll();
+        await render();
+      }
+    });
+  }
 })();
 </script>
 </body>
