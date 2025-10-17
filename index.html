@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>有名飲食チェーンのリンク集（更新マーク付き）</title>
+  <style>
+    :root {
+      --bg:#0f172a;            /* slate-900 */
+      --card:#111827;          /* gray-900 */
+      --text:#e5e7eb;          /* gray-200 */
+      --muted:#9ca3af;         /* gray-400 */
+      --accent:#22d3ee;        /* cyan-400 */
+      --ok:#10b981;            /* emerald-500 */
+      --warn:#f59e0b;          /* amber-500 */
+      --err:#ef4444;           /* red-500 */
+    }
+    html,body{height:100%}
+    body{
+      margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic UI", sans-serif;
+      background: radial-gradient(1200px 800px at 10% -10%, #0b1224, transparent), var(--bg);
+      color:var(--text);
+    }
+    header{
+      padding:24px; max-width:1100px; margin:0 auto;
+    }
+    h1{font-size: clamp(22px, 3vw, 32px); margin:0 0 6px}
+    .desc{color:var(--muted); line-height:1.7}
+    .toolbar{display:flex; gap:12px; flex-wrap:wrap; margin-top:12px}
+    button{ background: linear-gradient(180deg, rgba(34,211,238,.25), rgba(34,211,238,.05));
+      color:var(--text); border:1px solid rgba(34,211,238,.4); padding:10px 14px; border-radius:12px; cursor:pointer;
+      box-shadow: 0 6px 24px rgba(34,211,238,.08) inset, 0 4px 18px rgba(0,0,0,.35);
+    }
+    button:hover{filter:brightness(1.08)}
+    main{max-width:1100px; margin:0 auto; padding:8px 16px 48px}
+
+    .grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:14px; }
+    .card{ background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)); border:1px solid rgba(255,255,255,.06);
+      padding:16px; border-radius:16px; position:relative; min-height:104px; }
+    .title{ font-weight:700; font-size:18px; margin-bottom:6px }
+    .url{ font-size:12px; color:var(--muted); word-break: break-all }
+    .meta{ font-size:12px; color:var(--muted); margin-top:10px; display:flex; gap:10px; flex-wrap:wrap }
+    .badges{ position:absolute; right:10px; top:10px; display:flex; gap:6px; }
+    .badge{
+      font-size:11px; font-weight:700; padding:4px 8px; border-radius:999px; border:1px solid rgba(255,255,255,.15);
+      background:rgba(255,255,255,.06);
+    }
+    .b-new{ color:#002; background: linear-gradient(180deg, rgba(34,211,238,.8), rgba(34,211,238,.35)); border-color: rgba(34,211,238,.7) }
+    .b-upd{ color:#140900; background: linear-gradient(180deg, rgba(245,158,11,.9), rgba(245,158,11,.45)); border-color: rgba(245,158,11,.8) }
+    .b-ok{  color:#00140b; background: linear-gradient(180deg, rgba(16,185,129,.8), rgba(16,185,129,.4)); border-color: rgba(16,185,129,.8) }
+    .b-unk{ color:#160000; background: linear-gradient(180deg, rgba(239,68,68,.85), rgba(239,68,68,.45)); border-color: rgba(239,68,68,.8) }
+
+    .actions{ margin-top:12px; display:flex; gap:8px; }
+    .actions a{
+      display:inline-flex; align-items:center; gap:8px; text-decoration:none; color:var(--text); font-weight:700;
+      border:1px solid rgba(255,255,255,.12); padding:8px 10px; border-radius:10px;
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+    }
+    .actions a:hover{ filter:brightness(1.08) }
+    .note{ font-size:12px; color:var(--muted); margin-top:8px }
+    .small{ font-size:11px; color:var(--muted) }
+
+    footer{ max-width:1100px; margin:0 auto; padding:16px 24px; border-top:1px dashed rgba(255,255,255,.08); color:var(--muted) }
+    code.k{ background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); padding:2px 6px; border-radius:6px }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>有名飲食チェーンのリンク集（更新マーク自動判定）</h1>
+    <p class="desc">
+      各サイトの <b>最終アクセス日時</b> を <b>IndexedDB</b> に保存します。<br>
+      さらに、CORS対応サイトでは <b>ETag / Last-Modified</b> を取得し、<b>前回訪問以降に内容が更新された</b>可能性が高い場合は <span class="badge b-upd">更新あり</span> を表示します。<br>
+      CORS非対応などで確認できない場合は <span class="badge b-unk">確認不可</span> を表示します。
+    </p>
+    <div class="toolbar">
+      <button id="btn-recheck">すべて再チェック</button>
+      <button id="btn-reset">記録を全て削除</button>
+    </div>
+    <p class="note">※ ブラウザの制約上、外部サイトの更新検知は <span class="small">CORS でヘッダが取得できた場合のみ</span> 正確に行えます。取得できない場合は「未訪問」判定のみとなります。</p>
+  </header>
+
+  <main>
+    <section class="grid" id="linkGrid"></section>
+  </main>
+
+  <footer>
+    <p>ヒント：リンクをクリックすると、そのサイトの <code class="k">最終アクセス日時</code> と、当時の <code class="k">ETag/Last-Modified</code> を保存します。次回チェック時に差分があれば <span class="badge b-upd">更新あり</span> が点灯します。</p>
+  </footer>
+
+<script>
+// === 設定：チェーン一覧（必要に応じて追加/編集してください） ==========================
+const CHAINS = [
+  { name: 'マクドナルド', url: 'https://www.mcdonalds.co.jp/' },
+  { name: 'モスバーガー', url: 'https://www.mos.jp/' },
+  { name: 'ケンタッキーフライドチキン', url: 'https://www.kfc.co.jp/' },
+  { name: '吉野家', url: 'https://www.yoshinoya.com/' },
+  { name: 'すき家', url: 'https://www.sukiya.jp/' },
+  { name: '松屋', url: 'https://www.matsuyafoods.co.jp/' },
+  { name: 'はなまるうどん', url: 'https://www.hanamaruudon.com/' },
+  { name: 'くら寿司', url: 'https://www.kurasushi.co.jp/' },
+  { name: 'スシロー', url: 'https://www.akindo-sushiro.co.jp/' },
+  { name: 'ココイチ（CoCo壱番屋）', url: 'https://www.ichibanya.co.jp/' },
+  { name: 'ガスト', url: 'https://www.skylark.co.jp/gusto/' },
+  { name: 'サイゼリヤ', url: 'https://www.saizeriya.co.jp/' },
+  { name: 'びっくりドンキー', url: 'https://www.bikkuri-donkey.com/' },
+  { name: 'リンガーハット', url: 'https://www.ringerhut.jp/' },
+  { name: 'ドトールコーヒー', url: 'https://www.doutor.co.jp/' },
+  { name: 'コメダ珈琲店', url: 'https://www.komeda.co.jp/' },
+];
+
+// === IndexedDB ヘルパー =====================================================
+const DB_NAME = 'chain-links-db';
+const STORE = 'links';
+let db;
+
+function openDB(){
+  return new Promise((resolve, reject)=>{
+    const req = indexedDB.open(DB_NAME, 1);
+    req.onupgradeneeded = (e)=>{
+      const db = e.target.result;
+      if(!db.objectStoreNames.contains(STORE)){
+        const os = db.createObjectStore(STORE, { keyPath: 'url' });
+        os.createIndex('lastVisited', 'lastVisited');
+      }
+    };
+    req.onsuccess = ()=> resolve(req.result);
+    req.onerror = ()=> reject(req.error);
+  });
+}
+
+async function getRecord(url){
+  const tx = db.transaction(STORE, 'readonly');
+  const os = tx.objectStore(STORE);
+  return await new Promise((resolve, reject)=>{
+    const r = os.get(url);
+    r.onsuccess = ()=> resolve(r.result || null);
+    r.onerror   = ()=> reject(r.error);
+  });
+}
+
+async function putRecord(rec){
+  const tx = db.transaction(STORE, 'readwrite');
+  const os = tx.objectStore(STORE);
+  return await new Promise((resolve, reject)=>{
+    const r = os.put(rec);
+    r.onsuccess = ()=> resolve(true);
+    r.onerror   = ()=> reject(r.error);
+  });
+}
+
+async function clearAll(){
+  const tx = db.transaction(STORE, 'readwrite');
+  const os = tx.objectStore(STORE);
+  return await new Promise((resolve, reject)=>{
+    const r = os.clear();
+    r.onsuccess = ()=> resolve(true);
+    r.onerror   = ()=> reject(r.error);
+  });
+}
+
+// === 更新チェック（ETag / Last-Modified をHEAD/GETで取得） ====================
+async function fetchTags(url){
+  // 1) HEADでCORS許可されていれば最短
+  try{
+    const res = await fetch(url, { method:'HEAD', mode:'cors', cache:'no-store' });
+    const etag = res.headers.get('ETag') || res.headers.get('etag');
+    const lastMod = res.headers.get('Last-Modified') || res.headers.get('last-modified');
+    if(etag || lastMod){
+      return { etag, lastMod, ok:true, via:'HEAD' };
+    }
+  }catch(e){ /* noop */ }
+
+  // 2) 一部サイトはGETでのみヘッダ露出（負荷軽減のため body は読まない）
+  try{
+    const res = await fetch(url, { method:'GET', mode:'cors', cache:'no-store' });
+    const etag = res.headers.get('ETag') || res.headers.get('etag');
+    const lastMod = res.headers.get('Last-Modified') || res.headers.get('last-modified');
+    if(etag || lastMod){
+      return { etag, lastMod, ok:true, via:'GET' };
+    }
+  }catch(e){ /* noop */ }
+
+  // 3) CORS非対応など
+  return { ok:false };
+}
+
+function formatDT(ts){
+  if(!ts) return '—';
+  const d = new Date(ts);
+  const p = (n)=> String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+
+function badge(text, cls){
+  const s = document.createElement('span');
+  s.className = `badge ${cls}`; s.textContent = text; return s;
+}
+
+function cardTemplate(c){
+  const div = document.createElement('div');
+  div.className = 'card';
+  div.innerHTML = `
+    <div class="badges" data-badges></div>
+    <div class="title">${c.name}</div>
+    <div class="url">${c.url}</div>
+    <div class="actions">
+      <a href="${c.url}" target="_blank" rel="noopener" data-open>サイトを開く</a>
+      <a href="#" data-check>更新チェック</a>
+    </div>
+    <div class="meta">
+      <div>最終アクセス: <span data-lastVisited>—</span></div>
+      <div>最終チェック: <span data-lastChecked>—</span></div>
+      <div class="small">ETag: <span data-etag>—</span></div>
+      <div class="small">Last-Modified: <span data-lastmod>—</span></div>
+    </div>
+  `;
+  return div;
+}
+
+function setBadges(el, { isNew, isUpdated, isUnknown }){
+  const box = el.querySelector('[data-badges]');
+  box.innerHTML = '';
+  if(isNew) box.appendChild(badge('未訪問', 'b-new'));
+  if(isUpdated) box.appendChild(badge('更新あり', 'b-upd'));
+  if(isUnknown) box.appendChild(badge('確認不可', 'b-unk'));
+  if(!isNew && !isUpdated && !isUnknown) box.appendChild(badge('変更なし', 'b-ok'));
+}
+
+function computeFlags(rec){
+  const isNew = !rec?.lastVisited;
+  let isUpdated = false;
+  let isUnknown = false;
+
+  if(!isNew){
+    // 訪問済みの場合にのみ更新可否を判定
+    if(rec && (rec.etag || rec.lastMod)){
+      // 最新タグと、最後に訪問した時点のタグを比較
+      if(rec.lastVisitedTag){
+        if(rec.etag && rec.lastVisitedTag.etag && rec.etag !== rec.lastVisitedTag.etag){ isUpdated = true; }
+        else if(rec.lastMod && rec.lastVisitedTag.lastMod && rec.lastMod !== rec.lastVisitedTag.lastMod){ isUpdated = true; }
+      }
+    }else{
+      // タグが取得できない場合
+      isUnknown = true;
+    }
+  }
+
+  return { isNew, isUpdated, isUnknown };
+}
+
+async function render(){
+  const grid = document.getElementById('linkGrid');
+  grid.innerHTML = '';
+
+  for(const c of CHAINS){
+    const card = cardTemplate(c);
+    grid.appendChild(card);
+
+    const rec = await getRecord(c.url);
+    updateCardUI(card, rec);
+
+    // 開く
+    card.querySelector('[data-open]').addEventListener('click', async ()=>{
+      // 開く瞬間に lastVisited を更新（背景でタグも保存）
+      const prev = await getRecord(c.url) || { url:c.url };
+      const tag = await fetchTags(c.url);
+      const now = Date.now();
+      const merged = {
+        ...prev,
+        url: c.url,
+        lastVisited: now,
+        lastChecked: tag.ok ? now : (prev?.lastChecked || now),
+        etag: tag.ok ? (tag.etag || prev?.etag || null) : (prev?.etag || null),
+        lastMod: tag.ok ? (tag.lastMod || prev?.lastMod || null) : (prev?.lastMod || null),
+        lastVisitedTag: tag.ok ? { etag: tag.etag || null, lastMod: tag.lastMod || null } : (prev?.lastVisitedTag || null),
+      };
+      await putRecord(merged);
+      updateCardUI(card, merged);
+    });
+
+    // 再チェック
+    card.querySelector('[data-check]').addEventListener('click', async (e)=>{
+      e.preventDefault();
+      await checkOne(c.url, card);
+    });
+  }
+}
+
+function updateCardUI(card, rec){
+  card.querySelector('[data-lastVisited]').textContent = formatDT(rec?.lastVisited);
+  card.querySelector('[data-lastChecked]').textContent = formatDT(rec?.lastChecked);
+  card.querySelector('[data-etag]').textContent = rec?.etag || '—';
+  card.querySelector('[data-lastmod]').textContent = rec?.lastMod || '—';
+  const flags = computeFlags(rec);
+  setBadges(card, flags);
+}
+
+async function checkOne(url, card){
+  const prev = await getRecord(url) || { url };
+  const tag = await fetchTags(url);
+  const now = Date.now();
+  const merged = {
+    ...prev,
+    url,
+    lastChecked: now,
+    etag: tag.ok ? (tag.etag || null) : (prev.etag || null),
+    lastMod: tag.ok ? (tag.lastMod || null) : (prev.lastMod || null),
+  };
+  await putRecord(merged);
+  updateCardUI(card, merged);
+}
+
+async function recheckAll(){
+  const cards = [...document.querySelectorAll('.card')];
+  await Promise.all(cards.map(async (card)=>{
+    const url = card.querySelector('.url').textContent.trim();
+    await checkOne(url, card);
+  }));
+}
+
+// === 初期化 ================================================================
+(async function init(){
+  db = await openDB();
+  await render();
+
+  document.getElementById('btn-recheck').addEventListener('click', recheckAll);
+  document.getElementById('btn-reset').addEventListener('click', async ()=>{
+    if(confirm('IndexedDBに保存した記録を全て削除します。よろしいですか？')){
+      await clearAll();
+      await render();
+    }
+  });
+})();
+</script>
+</body>
+</html>
