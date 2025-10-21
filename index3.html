@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>uni928 のリンク集</title>
+  <style>
+    :root {
+      --bg:#0f172a;            /* slate-900 */
+      --card:#111827;          /* gray-900 */
+      --text:#e5e7eb;          /* gray-200 */
+      --muted:#9ca3af;         /* gray-400 */
+      --accent:#22d3ee;        /* cyan-400 */
+      --ok:#10b981;            /* emerald-500 */
+      --warn:#f59e0b;          /* amber-500 */
+      --err:#ef4444;           /* red-500 */
+    }
+    html,body{height:100%}
+    body{
+      margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic UI", sans-serif;
+      background: radial-gradient(1200px 800px at 10% -10%, #0b1224, transparent), var(--bg);
+      color:var(--text);
+    }
+    header{ padding:24px; max-width:1200px; margin:0 auto; }
+    h1{font-size: clamp(22px, 3vw, 32px); margin:0 0 6px}
+    .desc{color:var(--muted); line-height:1.7}
+    .toolbar{display:flex; gap:12px; flex-wrap:wrap; margin-top:12px}
+    button{ background: linear-gradient(180deg, rgba(34,211,238,.25), rgba(34,211,238,.05));
+      color:var(--text); border:1px solid rgba(34,211,238,.4); padding:10px 14px; border-radius:12px; cursor:pointer;
+      box-shadow: 0 6px 24px rgba(34,211,238,.08) inset, 0 4px 18px rgba(0,0,0,.35);
+    }
+    button:hover{filter:brightness(1.08)}
+    main{max-width:1200px; margin:0 auto; padding:8px 16px 48px}
+
+    .grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:14px; }
+    .card{ background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)); border:1px solid rgba(255,255,255,.06);
+      padding:16px; border-radius:16px; position:relative; min-height:116px; }
+    .title{ font-weight:700; font-size:18px; margin-bottom:6px }
+    .url{ font-size:12px; color:var(--muted); word-break: break-all }
+    .meta{ font-size:12px; color:var(--muted); margin-top:10px; display:flex; gap:10px; flex-wrap:wrap }
+    .badges{ position:absolute; right:10px; top:10px; display:flex; gap:6px; }
+    .badge{ font-size:11px; font-weight:700; padding:4px 8px; border-radius:999px; border:1px solid rgba(255,255,255,.15); background:rgba(255,255,255,.06); }
+    .b-new{ color:#002; background: linear-gradient(180deg, rgba(34,211,238,.8), rgba(34,211,238,.35)); border-color: rgba(34,211,238,.7) }
+    .b-upd{ color:#140900; background: linear-gradient(180deg, rgba(245,158,11,.9), rgba(245,158,11,.45)); border-color: rgba(245,158,11,.8) }
+    .b-ok{  color:#00140b; background: linear-gradient(180deg, rgba(16,185,129,.8), rgba(16,185,129,.4)); border-color: rgba(16,185,129,.8) }
+    .b-unk{ color:#160000; background: linear-gradient(180deg, rgba(239,68,68,.85), rgba(239,68,68,.45)); border-color: rgba(239,68,68,.8) }
+    .b-weak{ color:#001016; background: linear-gradient(180deg, rgba(59,130,246,.85), rgba(59,130,246,.45)); border-color: rgba(59,130,246,.8) }
+
+    .actions{ margin-top:12px; display:flex; gap:8px; flex-wrap:wrap }
+    .actions a, .actions button{
+      display:inline-flex; align-items:center; gap:8px; text-decoration:none; color:var(--text); font-weight:700;
+      border:1px solid rgba(255,255,255,.12); padding:8px 10px; border-radius:10px; background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02)); cursor:pointer
+    }
+    .actions a:hover, .actions button:hover{ filter:brightness(1.08) }
+    .note{ font-size:12px; color:var(--muted); margin-top:8px }
+    .small{ font-size:11px; color:var(--muted) }
+
+    .settings{ margin-top:16px; display:grid; gap:10px; grid-template-columns: minmax(240px,1fr) 1fr; align-items:center; }
+    .settings input[type="text"], .settings input[type="number"]{ width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.15); background:rgba(255,255,255,.06); color:var(--text) }
+    .settings label{ font-size:13px; color:var(--muted) }
+    .settings .row{ display:contents }
+
+    footer{ max-width:1200px; margin:0 auto; padding:16px 24px; border-top:1px dashed rgba(255,255,255,.08); color:var(--muted) }
+    code.k{ background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); padding:2px 6px; border-radius:6px }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>uni928 のリンク集</h1>
+    <p class="desc">
+      それぞれのサイトについて <b>最終アクセス日時</b> だけを <b>IndexedDB</b> に保存します。更新チェック（ETag/Last-Modified/RSS等）は<strong>行いません</strong>。
+    </p>
+
+    <div class="toolbar">
+      <button id="btn-reset">記録を全て削除</button>
+      <span id="diag" class="note" style="margin-left:8px">モード: 最終アクセスのみ（更新チェック無効）</span>
+    </div>
+
+    
+      <div class="row"><label><input type="checkbox" id="useRss" checked /> RSS/サイトマップも試す</label><span></span></div>
+      <div class="row"><label><input type="checkbox" id="useRange" checked /> HTMLの先頭 <input id="rangeKB" type="number" value="16" min="4" max="256" style="width:64px"> KB だけ取得して指紋ハッシュ</label><span></span></div>
+      <div class="row"><label><input type="checkbox" id="useFavicon" checked /> favicon（/favicon.ico）の Last-Modified を使用（弱い指標）</label><span></span></div>
+    </div>
+
+    <p class="note">※ ブラウザの制約上、外部サイトの詳細取得には CORS が必要です。<br>※ プロキシを使う場合は、対象サイトの利用規約に従い、許容された方法でご利用ください。</p>
+  </header>
+
+  <main>
+    <section class="grid" id="linkGrid"></section>
+  </main>
+
+  <footer>
+    <p>ヒント：リンクをクリックすると、その時点の <code class="k">最終アクセス</code>と、<code class="k">ETag/Last-Modified/指紋</code> を保存します。次回チェック時に差分があれば <span class="badge b-upd">更新あり</span> が点灯します。<br>
+    <span class="small">※ 指紋（fingerprint）は Range で取得した一部HTMLの SHA-256 です。ヘッダが無い場合の代替指標として使います。</span></p>
+  </footer>
+
+<script>
+// === 設定：チェーン一覧（追加/編集してください） ================================
+const CHAINS = [
+  // ハンバーガー
+  { name: 'フォルダを選択して内容をコピー＆表示', url: 'https://uni928.github.io/DirectoryInFileAllCopy/' },
+  { name: '1ファイルをドラッグ＆ドロップ → 関連ファイル名＆内容をコピー', url: 'https://uni928.github.io/DirectoryInFileAllCopy/index4.html' },
+  { name: 'ミニゲーム1', url: 'https://uni928.github.io/MiniGame1/' },
+  { name: 'ミニゲーム2', url: 'https://uni928.github.io/MiniGame1/index2.html' },
+  { name: 'がっつり 1 週間の献立を考える', url: 'https://uni928.github.io/CreateMenuAI2/' },
+  { name: 'シンプルな家計簿のサイト', url: 'https://uni928.github.io/Kakeibo/index5.html' },
+  { name: 'MiniGame4-1', url: 'https://uni928.github.io/MiniGame4/' },
+  { name: 'MiniGame4-2 PC専用', url: 'https://uni928.github.io/MiniGame4/index2.html' },
+  { name: 'カードゲームの展開をメモ', url: 'https://uni928.github.io/CardGameDevelopmentNotes/' },
+  { name: 'ChatGPT のバックアップ', url: 'https://uni928.github.io/ChatGPTSearcher/index3.html' },
+  { name: 'ChatGPT の自分の発言のみを抽出して閲覧', url: 'https://uni928.github.io/ChatGPTSearcher/index4.html' },
+  { name: '自作の検索ページ', url: 'https://uni928.github.io/Kensaku/index2.html' },
+  { name: 'ChatGPT のプロジェクト機能のファイル数上限を回避', url: 'https://uni928.github.io/ChatGPTProjectCompressor/' },
+  { name: '家系図を出力', url: 'https://uni928.github.io/CreateFamilyTree/' },
+  { name: 'ミニゲームその 2', url: 'https://uni928.github.io/MiniGame2/index2.html' },
+  { name: 'PC 初心者向けの文字の入力補助', url: 'https://uni928.github.io/PCBeginnerAid/' },
+  { name: 'コピー＆ペースト管理', url: 'https://uni928.github.io/CopyAndPasteManager/' },
+  { name: 'ブレインストーミングをグループ', url: 'https://uni928.github.io/BresutoAndKJ/' },
+  { name: 'ツリー構造のメモ帳', url: 'https://uni928.github.io/TreeMemo/index3.html' },
+  { name: '街 1 番の善人を目指すゲーム', url: 'https://uni928.github.io/MostBecomeGoodPersonGame/' },
+  { name: 'Google マップ効率化', url: 'https://uni928.github.io/RootNavi/' },
+  { name: 'PassGenerator', url: 'https://uni928.github.io/PassGenerator/' },
+  { name: 'メモ帳', url: 'https://uni928.github.io/MemotyouTest/index2.html' },
+  { name: 'サイトの表示崩れチェッカー', url: 'https://uni928.github.io/HtmlCollapseTester/' },
+  { name: 'RestHelper', url: 'https://uni928.github.io/RestHelper/' },
+  { name: 'サイトの CSS チェッカー', url: 'https://uni928.github.io/EasyCSSChecker/' },
+  { name: '昨日編集したファイルを調べる', url: 'https://uni928.github.io/OneDateCreateChecker/' },
+  { name: '数字挟み系落ちものパズル', url: 'https://uni928.github.io/FallGamePuzzle/' },
+  { name: '飲料水のおすすめの確保方法記事', url: 'https://uni928.github.io/DrinkingWaterKizi/' },
+  { name: 'マインクラフト記事1', url: 'https://uni928.github.io/MinecraftKizi/' },
+  { name: 'マインクラフト記事2', url: 'https://uni928.github.io/MinecraftKizi/index2.html' },
+  { name: '自分の飲料水の飲む量を調査', url: 'https://uni928.github.io/DrinkingWaterManagement/' },
+  { name: 'ライフ計算機', url: 'https://uni928.github.io/LifeClucer/index2.html' },
+  { name: 'フォルダの中の拡張子の内訳', url: 'https://uni928.github.io/ShowAllFileAtDirectory/' },
+  { name: 'ChatGPT で生成した html を高速でチェック', url: 'https://uni928.github.io/TestSpeedy/' },
+  { name: 'エクセルのマージ', url: 'https://uni928.github.io/ExcelMarger/' },
+  { name: 'ChatGPT のプロンプト生成', url: 'https://uni928.github.io/SephirothSimplePromptGenerator/' },
+  { name: 'マージ作業を効率化', url: 'https://uni928.github.io/DiffTextEditor/' },
+  { name: '画像を和色などの特定の色のみの構成に変換', url: 'https://uni928.github.io/SephirothImageToSpecificColor/' },
+  { name: 'ハイアンドローゲーム', url: 'https://uni928.github.io/SephirothHighAndLow/' },
+];
+
+// === IndexedDB ヘルパー =====================================================
+const DB_NAME = 'chain-links-db';
+const STORE = 'links';
+let db;
+const DISABLE_UPDATE_CHECK = true; // 更新チェックを省略（最終アクセスのみ）
+let FALLBACK = null; // localStorage ベースのフォールバック
+
+function openDB(){
+  return new Promise((resolve)=>{
+    try{
+      const req = indexedDB.open(DB_NAME, 2);
+      req.onupgradeneeded = (e)=>{
+        const idb = e.target.result;
+        if(!idb.objectStoreNames.contains(STORE)){
+          const os = idb.createObjectStore(STORE, { keyPath: 'url' });
+          os.createIndex('lastVisited', 'lastVisited');
+        }
+      };
+      req.onsuccess = ()=> resolve(req.result);
+      req.onerror   = ()=> resolve(null); // 失敗時は null を返す
+    }catch(err){
+      resolve(null);
+    }
+  });
+}
+
+
+async function getRecord(url){
+  if(db){
+    try{
+      const tx = db.transaction(STORE, 'readonly');
+      const os = tx.objectStore(STORE);
+      return await new Promise((resolve, reject)=>{
+        const r = os.get(url);
+        r.onsuccess = ()=> resolve(r.result || null);
+        r.onerror   = ()=> reject(r.error);
+      });
+    }catch(e){/* fallthrough */}
+  }
+  // フォールバック（localStorage）
+  if(FALLBACK==null){
+    try{ FALLBACK = JSON.parse(localStorage.getItem('chain-links-fallback')||'{}'); }catch(_){ FALLBACK = {}; }
+  }
+  return FALLBACK[url] || null;
+}
+
+async function putRecord(rec){
+  if(db){
+    try{
+      const tx = db.transaction(STORE, 'readwrite');
+      const os = tx.objectStore(STORE);
+      return await new Promise((resolve, reject)=>{
+        const r = os.put(rec);
+        r.onsuccess = ()=> resolve(true);
+        r.onerror   = ()=> reject(r.error);
+      });
+    }catch(e){/* fallthrough */}
+  }
+  // フォールバック
+  if(FALLBACK==null){
+    try{ FALLBACK = JSON.parse(localStorage.getItem('chain-links-fallback')||'{}'); }catch(_){ FALLBACK = {}; }
+  }
+  FALLBACK[rec.url] = rec;
+  try{ localStorage.setItem('chain-links-fallback', JSON.stringify(FALLBACK)); }catch(_){ /* quota? ignore */ }
+  return true;
+}
+
+async function clearAll(){
+  if(db){
+    try{
+      const tx = db.transaction(STORE, 'readwrite');
+      const os = tx.objectStore(STORE);
+      await new Promise((resolve, reject)=>{
+        const r = os.clear();
+        r.onsuccess = ()=> resolve(true);
+        r.onerror   = ()=> reject(r.error);
+      });
+    }catch(e){/* ignore */}
+  }
+  FALLBACK = {};
+  try{ localStorage.removeItem('chain-links-fallback'); }catch(_){ }
+  return true;
+}
+
+// === ユーティリティ ==========================================================
+function formatDT(ts){
+  if(!ts) return '—';
+  const d = new Date(ts);
+  const p = (n)=> String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+function badge(text, cls){ const s = document.createElement('span'); s.className = `badge ${cls}`; s.textContent = text; return s; }
+async function sha256Hex(str){
+  const enc = new TextEncoder().encode(str);
+  const buf = await crypto.subtle.digest('SHA-256', enc);
+  return [...new Uint8Array(buf)].map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+
+// === 更新信号の取得（多段フェイルオーバー） ================================
+async function fetchVia(target, init){
+  const proxy = document.getElementById('proxy').value.trim();
+  if(proxy){
+    const u = proxy.includes('?') ? `${proxy}&url=${encodeURIComponent(target)}` : `${proxy}?url=${encodeURIComponent(target)}`;
+    return fetch(u, init);
+  }
+  return fetch(target, init);
+}
+
+async function tryHeadOrGet(url){
+  // 1) HEAD
+  try{
+    const res = await fetchVia(url, { method:'HEAD', mode:'cors', cache:'no-store' });
+    if(res.ok){
+      const etag = res.headers.get('ETag') || res.headers.get('etag');
+      const lastMod = res.headers.get('Last-Modified') || res.headers.get('last-modified');
+      return { ok:true, etag, lastMod, via:'HEAD', endpoint:url };
+    }
+  }catch(e){}
+  // 2) GET（本文は読まない）
+  try{
+    const res = await fetchVia(url, { method:'GET', mode:'cors', cache:'no-store' });
+    const etag = res.headers.get('ETag') || res.headers.get('etag');
+    const lastMod = res.headers.get('Last-Modified') || res.headers.get('last-modified');
+    if(etag || lastMod){ return { ok:true, etag, lastMod, via:'GET', endpoint:url }; }
+    // CORS許可があるなら部分取得して指紋
+    if(res.ok && (document.getElementById('useRange').checked)){
+      const kb = Math.max(4, Math.min(256, Number(document.getElementById('rangeKB').value||16)));
+      try{
+        const part = await fetchVia(url, { method:'GET', mode:'cors', cache:'no-store', headers:{ 'Range': `bytes=0-${kb*1024-1}` }});
+        if(part.ok){
+          const text = await part.text();
+          const fingerprint = await sha256Hex(text);
+          return { ok:true, fingerprint, via:`RANGE(${kb}KB)`, endpoint:url };
+        }
+      }catch(e){}
+    }
+  }catch(e){}
+  return { ok:false };
+}
+
+async function tryFavicon(url){
+  if(!document.getElementById('useFavicon').checked) return { ok:false };
+  try{
+    const u = new URL(url);
+    const fav = `${u.origin}/favicon.ico`;
+    const res = await fetchVia(fav, { method:'HEAD', mode:'cors', cache:'no-store' });
+    if(res.ok){
+      const lastMod = res.headers.get('Last-Modified') || res.headers.get('last-modified');
+      if(lastMod){ return { ok:true, lastMod, via:'FAVICON', endpoint:fav, weak:true }; }
+    }
+  }catch(e){}
+  return { ok:false };
+}
+
+const RSS_CANDIDATES = [
+  'feed', 'rss', 'rss.xml', 'atom.xml', 'index.xml', 'news/rss', 'sitemap.xml'
+];
+async function tryRssOrSitemap(url){
+  if(!document.getElementById('useRss').checked) return { ok:false };
+  try{
+    const u = new URL(url);
+    for(const p of RSS_CANDIDATES){
+      const rss = `${u.origin}/${p}`;
+      try{
+        const r1 = await fetchVia(rss, { method:'HEAD', mode:'cors', cache:'no-store' });
+        if(r1.ok){
+          const etag = r1.headers.get('ETag') || r1.headers.get('etag');
+          const lastMod = r1.headers.get('Last-Modified') || r1.headers.get('last-modified');
+          if(etag || lastMod) return { ok:true, etag, lastMod, via:'RSSHEAD', endpoint:rss };
+        }
+      }catch(e){}
+      try{
+        const r2 = await fetchVia(rss, { method:'GET', mode:'cors', cache:'no-store' });
+        if(r2.ok){
+          const etag = r2.headers.get('ETag') || r2.headers.get('etag');
+          const lastMod = r2.headers.get('Last-Modified') || r2.headers.get('last-modified');
+          if(etag || lastMod) return { ok:true, etag, lastMod, via:'RSSGET', endpoint:rss };
+          // GETできたら中身を軽くハッシュ
+          const text = await r2.text();
+          const fingerprint = await sha256Hex(text.slice(0, 64*1024)); // 64KBまで
+          return { ok:true, fingerprint, via:'RSSHASH', endpoint:rss };
+        }
+      }catch(e){}
+    }
+  }catch(e){}
+  return { ok:false };
+}
+
+async function fetchUpdateSignal(url){
+  // メインURL
+  let r = await tryHeadOrGet(url);
+  if(r.ok) return r;
+  // RSS/サイトマップ
+  r = await tryRssOrSitemap(url);
+  if(r.ok) return r;
+  // favicon
+  r = await tryFavicon(url);
+  if(r.ok) return r;
+  return { ok:false };
+}
+
+// === UI生成 ================================================================
+function cardTemplate(c){
+  const div = document.createElement('div');
+  div.className = 'card';
+  div.innerHTML = `
+    <div class="badges" data-badges></div>
+    <div class="title">${c.name}</div>
+    <div class="url">${c.url}</div>
+    <div class="actions">
+      <a href="${c.url}" target="_blank" rel="noopener" data-open>サイトを開く</a>
+      <button data-debug>詳細</button>
+    </div>
+    <div class="meta">
+      <div>最終アクセス: <span data-lastVisited>—</span></div>
+    </div>
+      <div>最終チェック: <span data-lastChecked>—</span></div>
+      <div class="small">ETag: <span data-etag>—</span></div>
+      <div class="small">Last-Modified: <span data-lastmod>—</span></div>
+      <div class="small">指紋: <span data-fp>—</span></div>
+      <div class="small">ソース: <span data-source>—</span></div>
+    </div>
+  `;
+  return div;
+}
+
+function setBadges(el, { isNew }){
+  const box = el.querySelector('[data-badges]');
+  box.innerHTML = '';
+  if(isNew) box.appendChild(badge('未訪問', 'b-new'));
+  if(!isNew) box.appendChild(badge('訪問済み', 'b-ok'));
+}
+
+function computeFlags(rec) {
+  // 最終アクセスのみのモード用：未訪問かどうかだけ判定
+  const isNew = !rec || !rec.lastVisited;
+  return { isNew };
+}
+
+function updateCardUI(card, rec){
+  card.querySelector('[data-lastVisited]').textContent = formatDT(rec?.lastVisited);
+  card.querySelector('[data-lastChecked]').textContent = formatDT(rec?.lastChecked);
+  card.querySelector('[data-etag]').textContent = rec?.etag || '—';
+  card.querySelector('[data-lastmod]').textContent = rec?.lastMod || '—';
+  card.querySelector('[data-fp]').textContent = rec?.fingerprint ? rec.fingerprint.slice(0,12)+'…' : '—';
+  card.querySelector('[data-source]').textContent = rec?.source || '—';
+  const flags = computeFlags(rec);
+  setBadges(card, flags);
+}
+
+async function checkOne(url, card){
+  // 更新チェックは無効化しているので何もしません（互換のために残置）
+  const rec = await getRecord(url);
+  updateCardUI(card, rec);
+}
+
+async function render(){
+  const grid = document.getElementById('linkGrid');
+  grid.innerHTML = '';
+
+  for (const c of CHAINS){
+    const card = cardTemplate(c);
+    grid.appendChild(card);
+
+    const rec = await getRecord(c.url);
+    updateCardUI(card, rec);
+
+    // 開く（最終アクセスのみ記録）
+    {
+      const el = card.querySelector('[data-open]');
+      if (el) el.addEventListener('click', async ()=>{
+        const prev = await getRecord(c.url) || { url: c.url };
+        const now = Date.now();
+        const merged = { ...prev, url: c.url, lastVisited: now };
+        await putRecord(merged);
+        updateCardUI(card, merged);
+      });
+    }
+
+    // （更新チェックは無効化）存在しても何もしない
+    {
+      const el = card.querySelector('[data-check]');
+      if (el) el.addEventListener('click', async (e)=>{
+        e.preventDefault();
+        await checkOne(c.url, card);
+      });
+    }
+
+    // 詳細
+    {
+      const el = card.querySelector('[data-debug]');
+      if (el) el.addEventListener('click', async ()=>{
+        const r = await getRecord(c.url);
+        alert(JSON.stringify(r, null, 2));
+      });
+    }
+
+    // ソース表示（手動確認用）
+    {
+      const el = card.querySelector('[data-viewsrc]');
+      if (el) el.addEventListener('click', ()=>{
+        try { window.open('view-source:' + c.url, '_blank'); }
+        catch(e){ alert('view-source: はブラウザによってはブロックされます。Chrome/Edgeでお試しください。'); }
+      });
+    }
+  }
+}
+
+async function recheckAll(){
+  // 更新チェックを廃止したため実質 no-op（互換のために残置）
+  const cards = [...document.querySelectorAll('.card')];
+  for (const card of cards){
+    const url = card.querySelector('.url')?.textContent?.trim();
+    if (!url) continue;
+    await checkOne(url, card);
+  }
+}
+
+// === 初期化 ================================================================
+(async function init(){
+  try{
+    db = await openDB();
+    const diag = document.getElementById('diag');
+    if(diag){ diag.textContent = db ? '保存方式: IndexedDB' : '保存方式: localStorage（フォールバック）'; }
+    await render();
+  }catch(e){
+    // 最低限でもカードは描画する
+    const diag = document.getElementById('diag');
+    if(diag){ diag.textContent = '保存方式: localStorage（フォールバック）'; }
+    db = null;
+    await render();
+  }
+
+  // btn-recheck はモードにより存在しないことがあるため防御的に
+  {
+    const btnRe = document.getElementById('btn-recheck');
+    if (btnRe) btnRe.addEventListener('click', recheckAll);
+  }
+  {
+    const btnReset = document.getElementById('btn-reset');
+    if (btnReset) btnReset.addEventListener('click', async ()=>{
+      if(confirm('保存した記録を全て削除します。よろしいですか？')){
+        await clearAll();
+        await render();
+      }
+    });
+  }
+})();
+</script>
+</body>
+</html>
