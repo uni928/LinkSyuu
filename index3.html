@@ -97,48 +97,48 @@
 <script>
 // === 設定：チェーン一覧（追加/編集してください） ================================
 const CHAINS = [
-  { name: '小説をローカルに保存するためのサイト(自動ではありません)', url: 'https://uni928.github.io/SyousetuReader/' },
-  { name: '2 面トランプ作成', url: 'https://uni928.github.io/2MenTranpuCreater/' },
-  { name: 'フォルダを選択して内容をコピー＆表示', url: 'https://uni928.github.io/DirectoryInFileAllCopy/' },
-  { name: '1ファイルをドラッグ＆ドロップ → 関連ファイル名＆内容をコピー', url: 'https://uni928.github.io/DirectoryInFileAllCopy/index4.html' },
-  { name: 'ミニゲーム1', url: 'https://uni928.github.io/MiniGame1/' },
-  { name: 'ミニゲーム2', url: 'https://uni928.github.io/MiniGame1/index2.html' },
-  { name: 'がっつり 1 週間の献立を考える', url: 'https://uni928.github.io/CreateMenuAI2/' },
-  { name: 'シンプルな家計簿のサイト', url: 'https://uni928.github.io/Kakeibo/index5.html' },
-  { name: 'MiniGame4-1', url: 'https://uni928.github.io/MiniGame4/' },
-  { name: 'MiniGame4-2 PC専用', url: 'https://uni928.github.io/MiniGame4/index2.html' },
-  { name: 'カードゲームの展開をメモ', url: 'https://uni928.github.io/CardGameDevelopmentNotes/' },
-  { name: 'ChatGPT のバックアップ', url: 'https://uni928.github.io/ChatGPTSearcher/index3.html' },
-  { name: 'ChatGPT の自分の発言のみを抽出して閲覧', url: 'https://uni928.github.io/ChatGPTSearcher/index4.html' },
-  { name: '自作の検索ページ', url: 'https://uni928.github.io/Kensaku/index2.html' },
-  { name: 'ChatGPT のプロジェクト機能のファイル数上限を回避', url: 'https://uni928.github.io/ChatGPTProjectCompressor/' },
-  { name: '家系図を出力', url: 'https://uni928.github.io/CreateFamilyTree/' },
-  { name: 'ミニゲームその 2', url: 'https://uni928.github.io/MiniGame2/index2.html' },
-  { name: 'PC 初心者向けの文字の入力補助', url: 'https://uni928.github.io/PCBeginnerAid/' },
-  { name: 'コピー＆ペースト管理', url: 'https://uni928.github.io/CopyAndPasteManager/' },
-  { name: 'ブレインストーミングをグループ', url: 'https://uni928.github.io/BresutoAndKJ/' },
-  { name: 'ツリー構造のメモ帳', url: 'https://uni928.github.io/TreeMemo/index3.html' },
-  { name: '街 1 番の善人を目指すゲーム', url: 'https://uni928.github.io/MostBecomeGoodPersonGame/' },
-  { name: 'Google マップ効率化', url: 'https://uni928.github.io/RootNavi/' },
-  { name: 'PassGenerator', url: 'https://uni928.github.io/PassGenerator/' },
-  { name: 'メモ帳', url: 'https://uni928.github.io/MemotyouTest/index2.html' },
-  { name: 'サイトの表示崩れチェッカー', url: 'https://uni928.github.io/HtmlCollapseTester/' },
-  { name: 'RestHelper', url: 'https://uni928.github.io/RestHelper/' },
-  { name: 'サイトの CSS チェッカー', url: 'https://uni928.github.io/EasyCSSChecker/' },
-  { name: '昨日編集したファイルを調べる', url: 'https://uni928.github.io/OneDateCreateChecker/' },
-  { name: '数字挟み系落ちものパズル', url: 'https://uni928.github.io/FallGamePuzzle/' },
-  { name: '飲料水のおすすめの確保方法記事', url: 'https://uni928.github.io/DrinkingWaterKizi/' },
-  { name: 'マインクラフト記事1', url: 'https://uni928.github.io/MinecraftKizi/' },
-  { name: 'マインクラフト記事2', url: 'https://uni928.github.io/MinecraftKizi/index2.html' },
-  { name: '自分の飲料水の飲む量を調査', url: 'https://uni928.github.io/DrinkingWaterManagement/' },
-  { name: 'ライフ計算機', url: 'https://uni928.github.io/LifeClucer/index2.html' },
-  { name: 'フォルダの中の拡張子の内訳', url: 'https://uni928.github.io/ShowAllFileAtDirectory/' },
-  { name: 'ChatGPT で生成した html を高速でチェック', url: 'https://uni928.github.io/TestSpeedy/' },
-  { name: 'エクセルのマージ', url: 'https://uni928.github.io/ExcelMarger/' },
-  { name: 'ChatGPT のプロンプト生成', url: 'https://uni928.github.io/SephirothSimplePromptGenerator/' },
-  { name: 'マージ作業を効率化', url: 'https://uni928.github.io/DiffTextEditor/' },
-  { name: '画像を和色などの特定の色のみの構成に変換', url: 'https://uni928.github.io/SephirothImageToSpecificColor/' },
-  { name: 'ハイアンドローゲーム', url: 'https://uni928.github.io/SephirothHighAndLow/' },
+  { name: '小説をローカルに保存するためのサイト(自動ではありません)', url: 'https://uni928.github.io/SyousetuReader/', text: '小説を編集画面で登録する事で、小説をオフラインで見れるようになります。\n\n手動で登録する必要があるため、作業は時間がかかります。'},
+  { name: '2 面トランプ作成', url: 'https://uni928.github.io/2MenTranpuCreater/', text: '私個人的に作成した 2 面トランプを作成するためのサイトです。\n\nトランプで日頃遊ぶ人は楽しめると思います。'},
+  { name: 'フォルダを選択して内容をコピー＆表示', url: 'https://uni928.github.io/DirectoryInFileAllCopy/', text: '特定のフォルダの中のファイル名とファイル内容をコピーします。\n\nChatGPT で質問する場合等に便利です。'},
+  { name: '1ファイルをドラッグ＆ドロップ → 関連ファイル名＆内容をコピー', url: 'https://uni928.github.io/DirectoryInFileAllCopy/index4.html', text: '特定のファイルとその関連ファイルのファイル名とファイル内容を一括でコピーします。'},
+  { name: 'ミニゲーム1', url: 'https://uni928.github.io/MiniGame1/', text: '自作のパズルゲームです。\n\n目標点数を目指します。'},
+  { name: 'ミニゲーム2', url: 'https://uni928.github.io/MiniGame1/index2.html', text: '自作のパズルゲームです。\n\n目標点数を目指します。'},
+  { name: 'がっつり 1 週間の献立を考える', url: 'https://uni928.github.io/CreateMenuAI2/', text: '1 週間の献立を効率的に作成するサイトです。\n\n買い物リストが出力できますので、日曜日の買いだめが簡単です。'},
+  { name: 'シンプルな家計簿のサイト', url: 'https://uni928.github.io/Kakeibo/index5.html', text: '家計簿サイトです。\n\nログイン等が不要で、アクセスするだけで使用できます。'},
+  { name: 'MiniGame4-1', url: 'https://uni928.github.io/MiniGame4/', text: '8 番出口ライクのゲームです。'},
+  { name: 'MiniGame4-2 PC専用', url: 'https://uni928.github.io/MiniGame4/index2.html', text: '相手を攻撃して倒すアクションゲームです。\n\n作業の待ち時間の暇つぶしに是非'},
+  { name: 'カードゲームの展開をメモ', url: 'https://uni928.github.io/CardGameDevelopmentNotes/', text: 'カードゲームの展開メモ用サイトです。\n\n手札に必要なカード、使用するカード、展開をメモします。'},
+  { name: 'ChatGPT のバックアップ', url: 'https://uni928.github.io/ChatGPTSearcher/index3.html', text: 'ChatGPT のチャット履歴をローカルに保存したい方は是非。\n\nhtmlで保存されるため、ブラウザで開くだけで確認できます。'},
+  { name: 'ChatGPT の自分の発言のみを抽出して閲覧', url: 'https://uni928.github.io/ChatGPTSearcher/index4.html', text: 'ChatGPT は自分のコメントだけ見る事で、探したい履歴を簡単に探せます。\n\nこのサイトを使って、探したいやり取りを効率的に探してみて下さい。'},
+  { name: '自作の検索ページ', url: 'https://uni928.github.io/Kensaku/index2.html', text: 'ミニマリスト専用の検索ページです。\n\n広告等不要な表示は一切ありません。'},
+  { name: 'ChatGPT のプロジェクト機能のファイル数上限を回避', url: 'https://uni928.github.io/ChatGPTProjectCompressor/', text: 'ファイル数上限が来た方は是非'},
+  { name: '家系図を出力', url: 'https://uni928.github.io/CreateFamilyTree/', text: '家系図を簡単に作成します。'},
+  { name: 'ミニゲームその 2', url: 'https://uni928.github.io/MiniGame2/index2.html', text: '足して合計丁度を計測する速度を競います。'},
+  { name: 'PC 初心者向けの文字の入力補助', url: 'https://uni928.github.io/PCBeginnerAid/', text: 'PC 初心者は文字入力が苦手な人がいますので、あいうえお表で入力できるサイトです。'},
+  { name: 'コピー＆ペースト管理', url: 'https://uni928.github.io/CopyAndPasteManager/', text: 'よくコピーする構文をストックできます。コピーボタンですぐにコピーできます。'},
+  { name: 'ブレインストーミングをグループ', url: 'https://uni928.github.io/BresutoAndKJ/', text: 'ブレインストーミングの補助サイトです。'},
+  { name: 'ツリー構造のメモ帳', url: 'https://uni928.github.io/TreeMemo/index3.html', text: 'ツリー構造のメモサイトです。大項目・中項目・小項目で管理する方は是非'},
+  { name: '街 1 番の善人を目指すゲーム', url: 'https://uni928.github.io/MostBecomeGoodPersonGame/', text: 'ストラテジーゲームです。やりくりして街一番の善人を目指しましょう。'},
+  { name: 'Google マップ効率化', url: 'https://uni928.github.io/RootNavi/', text: 'Google マップのナビに必要な手順を減らします。'},
+  { name: 'PassGenerator', url: 'https://uni928.github.io/PassGenerator/', text: '特定の文字からパスワードを生成します。よく使う 74 桁のパスワードや ID をパスワードに変換してしまいましょう。'},
+  { name: 'メモ帳', url: 'https://uni928.github.io/MemotyouTest/index2.html', text: '効率重視のメモ帳です。'},
+  { name: 'サイトの表示崩れチェッカー', url: 'https://uni928.github.io/HtmlCollapseTester/', text: 'このチェッカーで調査すれば、表示崩れはないでしょう。'},
+  { name: 'RestHelper', url: 'https://uni928.github.io/RestHelper/', text: '休憩中に眺めるためのサイトです。'},
+  { name: 'サイトの CSS チェッカー', url: 'https://uni928.github.io/EasyCSSChecker/', text: 'CSS を開発者ツールより見やすくチェックします。'},
+  { name: '昨日編集したファイルを調べる', url: 'https://uni928.github.io/OneDateCreateChecker/', text: 'フォルダの編集時間順に並び替えます。'},
+  { name: '数字挟み系落ちものパズル', url: 'https://uni928.github.io/FallGamePuzzle/', text: '落ちものパズルです'},
+  { name: '飲料水のおすすめの確保方法記事', url: 'https://uni928.github.io/DrinkingWaterKizi/', text: '飲料水を安く・手間なしで確保するライフハックの記事です。'},
+  { name: 'マインクラフト記事1', url: 'https://uni928.github.io/MinecraftKizi/', text: 'マインクラフトの記事です。村人との取引のおススメを載せています。'},
+  { name: 'マインクラフト記事2', url: 'https://uni928.github.io/MinecraftKizi/index2.html', text: 'マインクラフトの記事です。モンスターが怖い場合の対策を載せています。'},
+  { name: '自分の飲料水の飲む量を調査', url: 'https://uni928.github.io/DrinkingWaterManagement/', text: '体調が悪い方、飲む量が足りていないのではないかと思う方、お通じが悪い方は、一度調査しましょう。'},
+  { name: 'ライフ計算機', url: 'https://uni928.github.io/LifeClucer/index2.html', text: '遊戯王のライフ計算を効率化します。'},
+  { name: 'フォルダの中の拡張子の内訳', url: 'https://uni928.github.io/ShowAllFileAtDirectory/', text: '拡張子の内訳を調査します。csv で記憶できますので、取引先に納品する際に合わせて送信すると良いかもしれません。'},
+  { name: 'ChatGPT で生成した html を高速でチェック', url: 'https://uni928.github.io/TestSpeedy/', text: 'ChatGPT で html を作る場合に効率化します。エラーが発生したらChatGPTで修正のプロンプトも出力できます。'},
+  { name: 'エクセルのマージ', url: 'https://uni928.github.io/ExcelMarger/', text: '複数のエクセルファイルをマージします。'},
+  { name: 'ChatGPT のプロンプト生成', url: 'https://uni928.github.io/SephirothSimplePromptGenerator/', text: 'エラーが発生した場合の ChatGPT のプロンプトを効率的に生成するサイトです。'},
+  { name: 'マージ作業を効率化', url: 'https://uni928.github.io/DiffTextEditor/', text: 'マージ作業を効率化します。A,Bのどちらを採用するかを差分毎に指定できます。'},
+  { name: '画像を和色などの特定の色のみの構成に変換', url: 'https://uni928.github.io/SephirothImageToSpecificColor/', text: 'この画像は和色のみの構成ならばどのような見た目になるか調べるサイトです。単色のイラストに特に向いています。'},
+  { name: 'ハイアンドローゲーム', url: 'https://uni928.github.io/SephirothHighAndLow/', text: '自作のハイアンドローゲームです。出題者が嘘を付ける回数が、3 回回答する度に 1 回増えます。'},
 ];
 
 // === IndexedDB ヘルパー =====================================================
@@ -433,8 +433,13 @@ async function render(){
     {
       const el = card.querySelector('[data-debug]');
       if (el) el.addEventListener('click', async ()=>{
-        const r = await getRecord(c.url);
-        alert(JSON.stringify(r, null, 2));
+        if(c.text != "") {
+          alert(c.text);
+        }
+        else {
+          const r = await getRecord(c.url);
+          alert(JSON.stringify(r, null, 2));
+        }
       });
     }
 
@@ -493,7 +498,6 @@ async function recheckAll(){
 </body>
 
 </html>
-
 
 
 
