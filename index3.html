@@ -75,24 +75,11 @@
       <button id="btn-reset">記録を全て削除</button>
       <span id="diag" class="note" style="margin-left:8px">モード: 最終アクセスのみ（更新チェック無効）</span>
     </div>
-
-    
-      <div class="row"><label><input type="checkbox" id="useRss" checked /> RSS/サイトマップも試す</label><span></span></div>
-      <div class="row"><label><input type="checkbox" id="useRange" checked /> HTMLの先頭 <input id="rangeKB" type="number" value="16" min="4" max="256" style="width:64px"> KB だけ取得して指紋ハッシュ</label><span></span></div>
-      <div class="row"><label><input type="checkbox" id="useFavicon" checked /> favicon（/favicon.ico）の Last-Modified を使用（弱い指標）</label><span></span></div>
-    </div>
-
-    <p class="note">※ ブラウザの制約上、外部サイトの詳細取得には CORS が必要です。<br>※ プロキシを使う場合は、対象サイトの利用規約に従い、許容された方法でご利用ください。</p>
   </header>
 
   <main>
     <section class="grid" id="linkGrid"></section>
   </main>
-
-  <footer>
-    <p>ヒント：リンクをクリックすると、その時点の <code class="k">最終アクセス</code>と、<code class="k">ETag/Last-Modified/指紋</code> を保存します。<br>
-    <span class="small">※ 指紋（fingerprint）は Range で取得した一部HTMLの SHA-256 です。ヘッダが無い場合の代替指標として使います。</span></p>
-  </footer>
 
 <script>
 // === 設定：チェーン一覧（追加/編集してください） ================================
@@ -242,109 +229,6 @@ async function sha256Hex(str){
   const enc = new TextEncoder().encode(str);
   const buf = await crypto.subtle.digest('SHA-256', enc);
   return [...new Uint8Array(buf)].map(x=>x.toString(16).padStart(2,'0')).join('');
-}
-
-// === 更新信号の取得（多段フェイルオーバー） ================================
-async function fetchVia(target, init){
-  const proxy = document.getElementById('proxy').value.trim();
-  if(proxy){
-    const u = proxy.includes('?') ? `${proxy}&url=${encodeURIComponent(target)}` : `${proxy}?url=${encodeURIComponent(target)}`;
-    return fetch(u, init);
-  }
-  return fetch(target, init);
-}
-
-async function tryHeadOrGet(url){
-  // 1) HEAD
-  try{
-    const res = await fetchVia(url, { method:'HEAD', mode:'cors', cache:'no-store' });
-    if(res.ok){
-      const etag = res.headers.get('ETag') || res.headers.get('etag');
-      const lastMod = res.headers.get('Last-Modified') || res.headers.get('last-modified');
-      return { ok:true, etag, lastMod, via:'HEAD', endpoint:url };
-    }
-  }catch(e){}
-  // 2) GET（本文は読まない）
-  try{
-    const res = await fetchVia(url, { method:'GET', mode:'cors', cache:'no-store' });
-    const etag = res.headers.get('ETag') || res.headers.get('etag');
-    const lastMod = res.headers.get('Last-Modified') || res.headers.get('last-modified');
-    if(etag || lastMod){ return { ok:true, etag, lastMod, via:'GET', endpoint:url }; }
-    // CORS許可があるなら部分取得して指紋
-    if(res.ok && (document.getElementById('useRange').checked)){
-      const kb = Math.max(4, Math.min(256, Number(document.getElementById('rangeKB').value||16)));
-      try{
-        const part = await fetchVia(url, { method:'GET', mode:'cors', cache:'no-store', headers:{ 'Range': `bytes=0-${kb*1024-1}` }});
-        if(part.ok){
-          const text = await part.text();
-          const fingerprint = await sha256Hex(text);
-          return { ok:true, fingerprint, via:`RANGE(${kb}KB)`, endpoint:url };
-        }
-      }catch(e){}
-    }
-  }catch(e){}
-  return { ok:false };
-}
-
-async function tryFavicon(url){
-  if(!document.getElementById('useFavicon').checked) return { ok:false };
-  try{
-    const u = new URL(url);
-    const fav = `${u.origin}/favicon.ico`;
-    const res = await fetchVia(fav, { method:'HEAD', mode:'cors', cache:'no-store' });
-    if(res.ok){
-      const lastMod = res.headers.get('Last-Modified') || res.headers.get('last-modified');
-      if(lastMod){ return { ok:true, lastMod, via:'FAVICON', endpoint:fav, weak:true }; }
-    }
-  }catch(e){}
-  return { ok:false };
-}
-
-const RSS_CANDIDATES = [
-  'feed', 'rss', 'rss.xml', 'atom.xml', 'index.xml', 'news/rss', 'sitemap.xml'
-];
-async function tryRssOrSitemap(url){
-  if(!document.getElementById('useRss').checked) return { ok:false };
-  try{
-    const u = new URL(url);
-    for(const p of RSS_CANDIDATES){
-      const rss = `${u.origin}/${p}`;
-      try{
-        const r1 = await fetchVia(rss, { method:'HEAD', mode:'cors', cache:'no-store' });
-        if(r1.ok){
-          const etag = r1.headers.get('ETag') || r1.headers.get('etag');
-          const lastMod = r1.headers.get('Last-Modified') || r1.headers.get('last-modified');
-          if(etag || lastMod) return { ok:true, etag, lastMod, via:'RSSHEAD', endpoint:rss };
-        }
-      }catch(e){}
-      try{
-        const r2 = await fetchVia(rss, { method:'GET', mode:'cors', cache:'no-store' });
-        if(r2.ok){
-          const etag = r2.headers.get('ETag') || r2.headers.get('etag');
-          const lastMod = r2.headers.get('Last-Modified') || r2.headers.get('last-modified');
-          if(etag || lastMod) return { ok:true, etag, lastMod, via:'RSSGET', endpoint:rss };
-          // GETできたら中身を軽くハッシュ
-          const text = await r2.text();
-          const fingerprint = await sha256Hex(text.slice(0, 64*1024)); // 64KBまで
-          return { ok:true, fingerprint, via:'RSSHASH', endpoint:rss };
-        }
-      }catch(e){}
-    }
-  }catch(e){}
-  return { ok:false };
-}
-
-async function fetchUpdateSignal(url){
-  // メインURL
-  let r = await tryHeadOrGet(url);
-  if(r.ok) return r;
-  // RSS/サイトマップ
-  r = await tryRssOrSitemap(url);
-  if(r.ok) return r;
-  // favicon
-  r = await tryFavicon(url);
-  if(r.ok) return r;
-  return { ok:false };
 }
 
 // === UI生成 ================================================================
@@ -501,23 +385,4 @@ async function recheckAll(){
 })();
 </script>
 </body>
-
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
