@@ -88,6 +88,10 @@
 // === 設定：チェーン一覧（追加/編集してください） ================================
 const CHAINS = [
   { name: '2 面トランプ作成', url: 'https://uni928.github.io/2MenTranpuCreater/', text: '私個人的に作成した 2 面トランプを作成するためのサイトです。\n\nトランプで日頃遊ぶ人は楽しめると思います。'},
+  { name: 'シンプルな家計簿のサイト', url: 'https://uni928.github.io/Kakeibo/index5.html', text: '家計簿サイトです。\n\nログイン等が不要で、アクセスするだけで使用できます。'},
+  { name: 'ツリー構造のメモ帳', url: 'https://uni928.github.io/TreeMemo/index3.html', text: 'ツリー構造のメモサイトです。大項目・中項目・小項目で管理する方は是非'},
+  { name: 'ツリー構造のメモ帳簡易版', url: 'https://uni928.github.io/TreeMemo/index4.html', text: 'ツリー構造のメモサイトです。\n\n大項目・中項目・小項目で管理する方は是非。\n\nこちらは簡易版です。\n\nPNGでも出力しておくのが、見た目的に綺麗です。'},
+  { name: '数字挟み系落ちものパズル', url: 'https://uni928.github.io/FallGamePuzzle/', text: '落ちものパズルです'},
   { name: 'サイト URL の QR を読み込んでアクセスする', url: 'https://uni928.github.io/ReadQRAndMove/', text: 'サイトの URL が書かれた QR コードを読み込んで、サイトにアクセスします。\n\nこのサイトがあれば QR コードのアプリを入れる必要がなくなるかもしれません。\n\nGoogle レンズを使うのが気にならない人はそちらの方が良いかもしれません。私は苦手なのでこのサイトを使っています。\n\nQRコードはデンソーウェーブの商標です。'},
   { name: 'スマホ間で文字のやりとり', url: 'https://uni928.github.io/MoziSwap/', text: 'スマホ間で文章をやりとりします。スマホ A からスマホ B に文章を渡したい場合は是非ご利用下さい。QR コードはデンソーウェーブの商標です。'},
   { name: '画像を特定のサイズ・場所で切り取るサイト', url: 'https://uni928.github.io/SpecificSizeCutImage/', text: '画像を特定のサイズにカットします。\n\nローカルにダウンロードして使用する事で、守秘義務のある画像も気軽に扱う事ができます。(ChatGPT で情報を抜き取るコードが含まれてないか質問する事で、より安心できます)(守秘義務を無視すれば、ネット上にもっと良いサイトがあります。気にならない方はそちらでも構わないと考えます)\n\n2 倍 or 4 倍に拡大してから切り取る事もできます。切り取りたい範囲より元画像が小さい場合はご利用下さい。\n\n画像を読み込んで、横幅と縦幅をピクセル指定して、何処を切り取るか指定します。\n\nその後「切り取ってダウンロード」ボタンを押すだけで、欲しかった切り取り画像を入手できます。\n\nアイコン作成等にご利用下さい。'},
@@ -102,7 +106,6 @@ const CHAINS = [
   { name: 'フォルダを選択して内容をコピー＆表示', url: 'https://uni928.github.io/DirectoryInFileAllCopy/', text: '特定のフォルダの中のファイル名とファイル内容をコピーします。\n\nChatGPT で質問する場合等に便利です。'},
   { name: '1ファイルをドラッグ＆ドロップ → 関連ファイル名＆内容をコピー', url: 'https://uni928.github.io/DirectoryInFileAllCopy/index4.html', text: '特定のファイルとその関連ファイルのファイル名とファイル内容を一括でコピーします。'},
   { name: 'がっつり 1 週間の献立を考える', url: 'https://uni928.github.io/CreateMenuAI2/', text: '1 週間の献立を効率的に作成するサイトです。\n\n買い物リストが出力できますので、日曜日の買いだめが簡単です。'},
-  { name: 'シンプルな家計簿のサイト', url: 'https://uni928.github.io/Kakeibo/index5.html', text: '家計簿サイトです。\n\nログイン等が不要で、アクセスするだけで使用できます。'},
   { name: 'MiniGame4-1', url: 'https://uni928.github.io/MiniGame4/', text: '8 番出口ライクのゲームです。'},
   { name: 'MiniGame4-2 PC専用', url: 'https://uni928.github.io/MiniGame4/index2.html', text: '相手を攻撃して倒すアクションゲームです。\n\n作業の待ち時間の暇つぶしに是非'},
   { name: 'カードゲームの展開をメモ', url: 'https://uni928.github.io/CardGameDevelopmentNotes/', text: 'カードゲームの展開メモ用サイトです。\n\n手札に必要なカード、使用するカード、展開をメモします。'},
@@ -115,8 +118,6 @@ const CHAINS = [
   { name: 'PC 初心者向けの文字の入力補助', url: 'https://uni928.github.io/PCBeginnerAid/', text: 'PC 初心者は文字入力が苦手な人がいますので、あいうえお表で入力できるサイトです。'},
   { name: 'コピー＆ペースト管理', url: 'https://uni928.github.io/CopyAndPasteManager/', text: 'よくコピーする構文をストックできます。コピーボタンですぐにコピーできます。'},
   { name: 'ブレインストーミングをグループ', url: 'https://uni928.github.io/BresutoAndKJ/', text: 'ブレインストーミングの補助サイトです。'},
-  { name: 'ツリー構造のメモ帳', url: 'https://uni928.github.io/TreeMemo/index3.html', text: 'ツリー構造のメモサイトです。大項目・中項目・小項目で管理する方は是非'},
-  { name: 'ツリー構造のメモ帳簡易版', url: 'https://uni928.github.io/TreeMemo/index4.html', text: 'ツリー構造のメモサイトです。\n\n大項目・中項目・小項目で管理する方は是非。\n\nこちらは簡易版です。\n\nPNGでも出力しておくのが、見た目的に綺麗です。'},
   { name: '街 1 番の善人を目指すゲーム', url: 'https://uni928.github.io/MostBecomeGoodPersonGame/', text: 'ストラテジーゲームです。やりくりして街一番の善人を目指しましょう。'},
   { name: 'Google マップ効率化', url: 'https://uni928.github.io/RootNavi/', text: 'Google マップのナビに必要な手順を減らします。'},
   { name: 'PassGenerator', url: 'https://uni928.github.io/PassGenerator/', text: '特定の文字からパスワードを生成します。よく使う 4 桁のパスワードや ID をパスワードに変換してしまいましょう。'},
@@ -126,7 +127,6 @@ const CHAINS = [
   { name: 'RestHelper', url: 'https://uni928.github.io/RestHelper/', text: '休憩中に眺めるためのサイトです。'},
   { name: 'サイトの CSS チェッカー', url: 'https://uni928.github.io/EasyCSSChecker/', text: 'CSS を開発者ツールより見やすくチェックします。'},
   { name: '昨日編集したファイルを調べる', url: 'https://uni928.github.io/OneDateCreateChecker/', text: 'フォルダの編集時間順に並び替えます。'},
-  { name: '数字挟み系落ちものパズル', url: 'https://uni928.github.io/FallGamePuzzle/', text: '落ちものパズルです'},
   { name: '飲料水のおすすめの確保方法記事', url: 'https://uni928.github.io/DrinkingWaterKizi/', text: '飲料水を安く・手間なしで確保するライフハックの記事です。'},
   { name: 'マインクラフト記事', url: 'https://uni928.github.io/MinecraftKizi/index4.html', text: 'マインクラフトの記事です。\n\n村人との取引のおススメ\nモンスターが怖い場合の対策\nブランチマイニングより村人との取引の方が優れている点\nの紹介を載せています。'},
   { name: '自分の飲料水の飲む量を調査', url: 'https://uni928.github.io/DrinkingWaterManagement/', text: '体調が悪い方、飲む量が足りていないのではないかと思う方、お通じが悪い方は、一度調査しましょう。'},
@@ -395,6 +395,7 @@ async function recheckAll(){
 </script>
 </body>
 </html>
+
 
 
 
